@@ -6,7 +6,7 @@ from urlparse import urljoin
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
-api = 'https://104.197.142.168:8080/apps/'
+api = 'http://104.197.142.168:8080/apps/'
 
 class Redirector(tornado.web.RequestHandler):
     """
