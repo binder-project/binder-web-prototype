@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="keywords" content="github python jupyter spark kubernetes">
+<meta name="description" content="Turn a GitHub repo into a collection of interactive notebooks">
+<meta property="og:image" content="http://bolt-project.org/images/header-logo-small-square.png"/>
+<title>binder</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/shelves.css">
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="icon" sizes="16x16 32x32" href="favicon.ico?v=2">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<body>
+
+	<div class='row' style='margin-top: 50px; margin-bottom: 20px'>
+		<img class='logo' src='svg/logo.svg'></img>
+	</div>
+
+	<div class='row'>
+		<h1>Turn a GitHub repo into a collection of interactive notebooks powered by Jupyter and Kubernetes.</h1>
+	</div>
+
+	<div class='row' style='max-width: 50%'>
+	<p style='font-size: 20px'>Have a repo full of Jupyter notebooks? With Binder, you can add a badge that opens those notebooks in an executable environment, making your analysis immediately reproducible by anyone, anywhere. 100% free and open source.</p>
+	</div>
+
+	<div class='row' id='step1' style='margin-top: 40px; padding-top: 20px'>
+		<div class='column-1 prefix-1'>
+			<div class='number step-one-color'>1</div>
+		</div>
+		<div class='box column-5'>
+			<h2>Tell us your GitHub repo</h2>
+			<form id='form'>
+				<input class='step-one' id='repo' type="text" placeholder='organization/project  OR  user/project'>
+			</form>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>This should be a repository that contains a collection of Jupyter notebooks. One notebook should be called index.ipynb — this is where your Binder will start. Any extra folders or files (e.g. data) will also be included.</p>
+		</div>
+	</div>
+
+	<div class='row' id='step2' style='margin-top:40px'>
+		<div class='column-1 prefix-1'>
+			<div class='number step-two-color'>2</div>
+		</div>
+		<div class='box column-5'>
+			<h2>Configure your build</h2>
+			<br>
+			<div class='dependency'>
+				<input type="radio" id="dependency-requirements" name="dependency-radio" value="requirements" class="dependency-checkbox">
+				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for Python dependencies</span>
+			</div>
+			<h3 style='margin-left: 10px'>or</h3>
+			<div class='dependency'>
+				<input type="radio" id="dependency-dockerfile" name="dependency-radio" value="dockerfile" class="dependency-checkbox">
+				<label for="dependency-dockerfile"><span><span></span></span></label><label for='dependency-dockerfile' span id="dependency-dockerfile-checkbox-text" class='checkbox-text'>Dockerfile</label><span class='dependency-checkbox-info'>for custom builds</span>
+			</div>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, leave this blank. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/single-service-example'>example</a>). If they have more complex dependencies, include a custom Dockerfile (see <a href='https://github.com/binder-project/full-dockerfile-example'>example</a>) that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a>.</p>
+		</div>
+	</div>
+
+	<div class='row' id='step3' style='margin-top:40px'>
+		<div class='column-1 prefix-1'>
+			<div class='number step-three-color'>3</div>
+		</div>
+		<div class='box column-5'>
+			<h2>Attach services</h2>
+			<div class='service'>
+				<input type="checkbox" id="service-postgres" value="postgres" class="service-checkbox">
+				<label for="service-postgres"><span><span></span></span></label><label for='service-postgres' id='service-postgres-checkbox-text' class='checkbox-text'>Postgres</label><span id="service-postgres-checkbox-info" class='service-checkbox-info'>access server at <a class='service-link'>postgres</a></span>
+			</div>
+			<div class='service'>
+				<input type="checkbox" id="service-spark" value="spark" class="service-checkbox">
+				<label for="service-spark"><span><span></span></span></label><label for='service-spark' id="service-spark-checkbox-text" class='checkbox-text'>Spark</label><span id="service-spark-checkbox-info" class='service-checkbox-info'>access master at <a class='service-link'>master</a></span>
+			</div>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>These are external services that run independently of your notebooks, but can be accessed at the given host name. Add as many as you like.</p>
+		</div>
+	</div>
+
+	<div class='row' style='margin-bottom: 20px; margin-top: 50px'>
+		<div class='launch'>
+			<button id='submit' class='submit'>make</button><span>my binder</span>
+		</div>
+	</div>
+
+	<div class='row' id='badge' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2>Your binder is building...</h2>
+			<p>Paste this into your README</p>
+			<div class='badge-link'><p>[![Binder](https://mybinder.org/svg/badge.svg)](https://mybinder.org/project/repo)</p></div>
+			<p>to get this badge<img class='badge-logo' src='svg/badge.svg'></img></p>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>When your Binder is ready, anyone who clicks that link will get their own private environment with your notebooks. May take up to 10 minutes to build, please by patient.</p>
+		</div>
+	</div> 
+
+	<div class='row' id='failed' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'>Sorry! Your Binder couldn't be submitted. Double check your settings and try again?</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>Most likely there's a problem with the GitHub repository you asked to use.</p>
+		</div>
+	</div>
+
+	<div class='row' style='margin-top: 40px; margin-bottom: 60px'>
+		<h1>questions? join the <a href='http://gitter.im/binder-project/binder'>chat</a>, see the <a href='http://github.com/binder-project/binder'>code</a></h1>
+	</div>
+
+	<div id="modal" class="dialog">
+		<div>
+			<a id="close" class="close">X</a>
+			<h2>Cannot build Binder</h2>
+			<p>GitHub repo not specified</p>
+		</div>
+	</div>
+
+</body>
+
+</html>
+
+
+<script>
+
+$('#repo').focus(onInputFocus);
+$('#repo').blur(onInputBlur);
+
+function onInputFocus(ev) {
+	$(ev.target).addClass('repo-filled')
+}
+
+function onInputBlur(ev) {
+	if( ev.target.value === '' ) {
+		$(ev.target).removeClass('repo-filled')
+	}
+}
+
+$('#badge').fadeOut()
+
+$("#dependency-requirements").click(function(event) {
+	var el = $('#dependency-requirements-checkbox-text')
+	el.addClass('dependency-toggle')
+	var el = $('#dependency-dockerfile-checkbox-text')
+	el.removeClass('dependency-toggle')
+})
+
+$("#dependency-dockerfile").click(function(event) {
+	var el = $('#dependency-dockerfile-checkbox-text')
+	el.addClass('dependency-toggle')
+	var el = $('#dependency-requirements-checkbox-text')
+	el.removeClass('dependency-toggle')
+})
+
+$("#service-postgres").click(function(event) {
+	var el = $('#service-postgres-checkbox-text')
+	el.toggleClass('service-toggle')
+	var el = $('#service-postgres-checkbox-info')
+	el.toggleClass('show-hide')
+})
+
+$("#service-spark").click(function(event) {
+	var el = $('#service-spark-checkbox-text')
+	el.toggleClass('service-toggle')
+	var el = $('#service-spark-checkbox-info')
+	el.toggleClass('show-hide')
+})
+
+$("#form").submit(function( event ) {
+  event.preventDefault();
+});
+
+$("#submit").click(function( event ) {
+
+	$('#badge').fadeOut(100)
+
+	var repo, postgres, spark, dependency
+	var payload = {}
+	payload['services'] = []
+	payload['dependencies'] = []
+
+ 	repo = $("#repo").val();
+ 	postgres = $("#service-postgres").is(':checked')
+ 	spark = $("#service-spark").is(':checked')
+
+ 	if (postgres) {
+ 		payload['services'].push({
+ 			"name": "postgres",
+ 			"version": "9.4"
+ 		})
+ 	}
+ 	if (spark) {
+ 		payload['services'].push({
+ 			"name": "spark",
+ 			"version": "1.4.1"
+ 		})
+ 	}
+
+ 	dependency = $('input[name=dependency-radio]').filter(':checked').val();
+ 	
+ 	if (dependency == 'requirements') {
+ 		payload['dependencies'].push("requirements.txt")
+ 	}
+ 	if (dependency == 'dockerfile') {
+ 		payload['dependencies'].push("Dockerfile")
+ 	}
+
+ 	if (!repo) {
+ 		
+ 		$('html, body').animate({
+			scrollTop: $("#step1").offset().top
+		}, 700);
+		$("#repo").addClass("error").delay(1200).queue(function(next){
+		    $(this).removeClass("error");
+		    next();
+		});
+
+ 	} else {
+
+ 		$.ajax(
+
+ 			{
+ 				method: "POST",
+ 				url: "http://104.197.142.168:8080/apps/" + repo,
+ 				dataType: 'json',
+ 				timeout: 2000,
+ 				data: JSON.stringify(payload),
+
+ 				success: function(data) {
+ 					console.log(data)
+ 					console.log('success')
+ 					$('#badge').fadeIn(700)
+			 		$('html, body').animate({
+			        	scrollTop: $("#badge").offset().top
+			    	}, 700);
+ 				},
+
+ 				error: function(err) {
+ 					console.log(err)
+ 					$('#failed').fadeIn(700)
+			 		$('html, body').animate({
+			        	scrollTop: $("#failed").offset().top
+			    	}, 700);
+					$('#failed').delay(2500).fadeOut(500)
+			    	
+ 				}
+
+ 			}
+
+ 		)
+ 	}
+
+});
+
+
+</script>
