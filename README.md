@@ -6,6 +6,6 @@ Inlcudes a `tornado` app for serving the static assets and redirecting to the ma
 To run locally:
 
 ```
-python app.py --host=localhost --port=8888
+python app.py
 ```
 
