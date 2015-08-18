@@ -1,7 +1,7 @@
 Web app for making Binders
 --------------------------
 
-Inlcudes a `tornado` app for serving the static assets and redirecting routes to the main Binder API endpoint. 
+Inlcudes a `tornado` app for serving the static assets and redirecting to the main Binder API endpoint. 
 
 To run locally:
 
