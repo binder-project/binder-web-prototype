@@ -2,12 +2,7 @@ import os
 import requests
 import tornado.ioloop
 import tornado.web
-from tornado.options import options, define
 from urlparse import urljoin
-
-
-define("host", default="localhost", help="app host", type=str)
-define("port", default=8888, help="app port", type=int)
 
 root = os.path.dirname(os.path.abspath(__file__))
 api = 'http://104.197.142.168:8080/apps/'
@@ -42,7 +37,5 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
-    options.parse_command_line()
-    port = os.environ.get("PORT", options.port)
-    application.listen(port)
+    application.listen(os.environ.get("PORT", 5000))
     tornado.ioloop.IOLoop.current().start()
