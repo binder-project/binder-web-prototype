@@ -26,6 +26,14 @@ a {
 	transition: all 0.2s;
 }
 
+.grayed {
+	color: rgb(120,120,120);
+}
+
+.grayed:hover {
+	color: rgb(30,30,30);
+}
+
 p {
 	font-family: ClearSans-Light;
 	font-size: 16px;
