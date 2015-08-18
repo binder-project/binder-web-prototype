@@ -11,9 +11,9 @@ api = 'http://104.197.142.168:8080/apps/'
 class Redirector(tornado.web.RequestHandler):
     def get(self, app_id):
 
-        baseurl = 'http://' + 'localhost' + ':' + str(port)
+        baseurl = self.request.protocol + "://" + self.request.host
 
-        r = requests.get(urljoin(api, app_id))
+        r = requests.get(urljoin(api, app_id, '/status'))
 
         if r.status_code == 404:
             self.redirect(baseurl + '/status/404.html')
