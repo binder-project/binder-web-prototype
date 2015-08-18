@@ -2,14 +2,21 @@ import os
 import requests
 import tornado.ioloop
 import tornado.web
+from tornado.options import options, define
 from urlparse import urljoin
 
+
+define("host", default="localhost", help="app host", type=str)
+define("port", default=8888, help="app port", type=int)
+
 root = os.path.dirname(os.path.abspath(__file__))
-baseurl = 'http://localhost:8888'
 api = 'http://104.197.142.168:8080/apps/'
 
 class Redirector(tornado.web.RequestHandler):
     def get(self, app_id):
+
+        baseurl = 'http://' + options.host + ':' + str(options.port)
+
         r = requests.get(urljoin(api, app_id))
 
         if r.status_code == 404:
@@ -35,5 +42,6 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
-    application.listen(8888)
+    options.parse_command_line()
+    application.listen(options.port)
     tornado.ioloop.IOLoop.current().start()
