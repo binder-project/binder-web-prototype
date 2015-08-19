@@ -111,6 +111,16 @@
 		</div>
 	</div>
 
+	<div class='row' id='norepo' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'>Oops, that GitHub repo does not exist. Double check the repo name and try again.</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>Make sure you're entering a valid repository.</p>
+		</div>
+	</div>
+
 	<div class='row' style='margin-top: 40px; margin-bottom: 60px'>
 		<h1>questions? join the <a href='http://gitter.im/binder-project/binder'>chat</a>, see the <a href='http://github.com/binder-project/binder'>code</a></h1>
 	</div>
@@ -146,16 +156,25 @@ function onInputBlur(ev) {
 $('#repo').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
+	$('#norepo').fadeOut(100)
+})
+
+$('#repo').select(function() {
+	$('#badge').fadeOut(100)
+	$('#failed').fadeOut(100)
+	$('#norepo').fadeOut(100)
 })
 
 $('input[type=checkbox]').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
+	$('#norepo').fadeOut(100)
 })
 
 $('input[type=radio]').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
+	$('#norepo').fadeOut(100)
 })
 
 $("#dependency-requirements").click(function(event) {
@@ -240,6 +259,28 @@ $("#submit").click(function( event ) {
  		$.ajax(
 
  			{
+ 				method: "GET",
+ 				url: "https://api.github.com/repos/" + repo,
+
+ 				success: function(data) {
+ 					launch()
+ 				},
+
+ 				error: function(err) {
+ 					$('#norepo').fadeIn(700)
+			 		$('html, body').animate({
+			        	scrollTop: $("#norepo").offset().top
+			    	}, 700);
+ 				}
+ 			}
+
+ 			)
+ 	}
+
+ 	function launch() {
+ 		$.ajax(
+
+ 			{
  				method: "POST",
  				url: "http://104.197.142.168:8080/apps/" + repo,
  				dataType: 'json',
@@ -260,12 +301,9 @@ $("#submit").click(function( event ) {
  					$('#failed').fadeIn(700)
 			 		$('html, body').animate({
 			        	scrollTop: $("#failed").offset().top
-			    	}, 700);
-			    	
+			    	}, 700);	
  				}
-
  			}
-
  		)
  	}
 
