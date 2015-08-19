@@ -195,6 +195,10 @@ input[type=text].step-one:focus {
 	color: rgb(221, 138, 59);
 }
 
+input::-moz-placeholder {
+  color: rgb(120,120,120) !important;
+}
+
 .error {
 	box-shadow: 0 0 0 2px rgb(245, 30, 22);
 }
