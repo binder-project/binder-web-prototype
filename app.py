@@ -2,11 +2,14 @@ import os
 import requests
 import tornado.ioloop
 import tornado.web
+from tornado.options import define, options
+
 from urlparse import urljoin
+
+define("api", default="104.197.142.168", help="IP address for binder API endpoint")
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
-api = 'http://104.197.142.168:8080/apps/'
 
 class Redirector(tornado.web.RequestHandler):
     """
@@ -15,8 +18,9 @@ class Redirector(tornado.web.RequestHandler):
     def get(self, app_id):
 
         baseurl = self.request.protocol + "://" + self.request.host
+        endpoint = 'http://' + options.api + ':8080/apps/'
 
-        r = requests.get(urljoin(api, app_id, '/status'))
+        r = requests.get(urljoin(endpoint, app_id, '/status'))
 
         if r.status_code == 404:
             self.redirect(baseurl + '/status/missing.html')
