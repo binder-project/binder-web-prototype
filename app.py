@@ -22,23 +22,25 @@ class Redirector(tornado.web.RequestHandler):
 
         r = requests.get(urljoin(endpoint, app_id + '/status'))
 
-        print(r.status_code)
-
         if r.status_code == 404:
             self.redirect(baseurl + '/status/missing.html')
         
         if r.status_code == 200:
             blob = r.json()
-            print(blob)
             if 'build_status' in blob:
                 status = blob['build_status']
                 if status == 'failed':
                     self.redirect(baseurl + '/status/failed.html')
                 if status == 'building':
                     self.redirect(baseurl + '/status/building.html')
-            elif 'redirect_url' in blob:
-                url = blob['redirect_url']
-                self.redirect(url)
+                if status == 'completed':
+                    r = requests.get(urljoin(endpoint, app_id))
+                    redirectblob = r.json()
+                    if 'redirect_url' in redirectblob:
+                        url = redirectblob['redirect_url']
+                        self.redirect(url)
+                    else:
+                        self.redirect(baseurl + '/status/unknown.html')
             else:
                 self.redirect(baseurl + '/status/unknown.html')
 
