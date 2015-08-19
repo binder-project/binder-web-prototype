@@ -389,7 +389,6 @@ input[type=checkbox]:not(old):checked.service-checkbox + label > span:before{
 
 .submit:active {
 	color: rgb(70,70,70);
-	border: solid 3px rgb(70,70,70);
 }
 
 h1 {
