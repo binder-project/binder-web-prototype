@@ -59,6 +59,6 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
-    tornado.options.parse_command_line()
+    tornado.log.enable_pretty_logging()
     application.listen(port)
     tornado.ioloop.IOLoop.current().start()
