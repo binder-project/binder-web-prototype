@@ -59,5 +59,6 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
+    tornado.options.parse_command_line()
     application.listen(port)
     tornado.ioloop.IOLoop.current().start()
