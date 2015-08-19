@@ -22,11 +22,14 @@ class Redirector(tornado.web.RequestHandler):
 
         r = requests.get(urljoin(endpoint, app_id + '/status'))
 
+        print(r.status_code)
+
         if r.status_code == 404:
             self.redirect(baseurl + '/status/missing.html')
         
         if r.status_code == 200:
             blob = r.json()
+            print(blob)
             if 'build_status' in blob:
                 status = blob['build_status']
                 if status == 'failed':
