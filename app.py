@@ -20,7 +20,7 @@ class Redirector(tornado.web.RequestHandler):
         baseurl = self.request.protocol + "://" + self.request.host
         endpoint = 'http://' + options.api + ':8080/apps/'
 
-        r = requests.get(urljoin(endpoint, app_id, '/status'))
+        r = requests.get(urljoin(endpoint, app_id + '/status'))
 
         if r.status_code == 404:
             self.redirect(baseurl + '/status/missing.html')
