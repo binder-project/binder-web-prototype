@@ -363,8 +363,6 @@ input[type=checkbox]:not(old):checked.service-checkbox + label > span:before{
 
 .submit {
 	cursor: pointer;
-	border: solid 3px white;
-	color: white;
 	padding-left: 20px;
 	padding-right: 20px;
 	padding-bottom: 10px;
@@ -373,13 +371,15 @@ input[type=checkbox]:not(old):checked.service-checkbox + label > span:before{
 	font-size: 48px;
 	border-radius: 10px;
 	background: none;
-	background-color: rgb(150,150,150);
 	transition: all 0.2s;
+	background-color: white;
+	color: rgb(150,150,150);
+	border: solid 3px rgb(150,150,150);
 }
 
 .submit:hover {
-	background-color: white;
-	color: rgb(150,150,150);
+	background-color: rgb(150,150,150);
+	color: white;
 	border: solid 3px rgb(150,150,150);
 }
 
