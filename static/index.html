@@ -7,7 +7,7 @@
 <title>binder</title>
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/shelves.css">
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <link rel="icon" sizes="16x16 32x32" href="favicon.ico?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <html>
@@ -36,7 +36,7 @@
 			</form>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>This should be a repository that contains a collection of Jupyter notebooks. One notebook should be called index.ipynb — this is where your Binder will start. Any extra folders or files (e.g. data) will also be included.</p>
+			<p class='sidebar'>This should contain Jupyter notebooks. One should be called index.ipynb — this is where your Binder will start. Any extra folders or files (e.g. data) will be included. See an example repo using Binder <a href='https://github.com/binder-project/example-requirements' class='repo-link'>here</a>.</p>
 		</div>
 	</div>
 
@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, leave this blank. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/single-service-example'>example</a>). If they have more complex dependencies, include a custom Dockerfile (see <a href='https://github.com/binder-project/full-dockerfile-example'>example</a>) that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a>.</p>
+			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, leave this blank. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>) that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a>.</p>
 		</div>
 	</div>
 
@@ -78,7 +78,7 @@
 			</div>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>These are external services that run independently of your notebooks, but can be accessed at the given host name. Add as many as you like.</p>
+			<p class='sidebar'>These are external services that run independently of your notebooks, but can be accessed at the given host name. Add as many as you like. See an example that depends on a service <a href='https://github.com/binder-project/example-service-postgres' class='service-link'>here</a>.</p>
 		</div>
 	</div>
 
@@ -122,7 +122,7 @@
 	</div>
 
 	<div class='row' style='margin-top: 40px; margin-bottom: 60px'>
-		<h1>questions? join the <a href='http://gitter.im/binder-project/binder'>chat</a>, see the <a href='http://github.com/binder-project/binder'>code</a></h1>
+		<h1>questions? join the <a class='grayed' href='http://gitter.im/binder-project/binder'>chat</a>, see the <a class='grayed' href='http://github.com/binder-project/binder'>code</a></h1>
 	</div>
 
 	<div id="modal" class="dialog">

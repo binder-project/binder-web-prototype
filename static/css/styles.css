@@ -319,6 +319,14 @@ input[type=checkbox]:not(old):checked.service-checkbox + label > span:before{
 	color: rgb(230,101,129);
 }
 
+.repo-link {
+	color: rgb(221, 138, 59);
+}
+
+.repo-link:hover {
+	color: rgb(180, 122, 42);
+}
+
 .dependency-link {
 	color: rgb(230,101,129);
 }
