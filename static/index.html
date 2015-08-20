@@ -314,7 +314,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "GET",
- 				url: "http://104.154.66.41:8080/apps/" + repo + "/status",
+ 				url: "http://104.197.142.168:8080/apps/" + repo + "/status",
  				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
@@ -348,7 +348,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "POST",
- 				url: "http://104.154.66.41:8080/apps/" + repo,
+ 				url: "http://104.197.142.168:8080/apps/" + repo,
  				dataType: 'json',
  				timeout: 4000,
  				data: JSON.stringify(payload),
