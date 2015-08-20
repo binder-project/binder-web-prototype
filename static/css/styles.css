@@ -26,6 +26,10 @@ a {
 	transition: all 0.2s;
 }
 
+.simple-link {
+	border-bottom: none;
+}
+
 .grayed {
 	color: rgb(120,120,120);
 }

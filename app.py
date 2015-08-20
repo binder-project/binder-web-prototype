@@ -32,7 +32,7 @@ class Redirector(tornado.web.RequestHandler):
                 if status == 'failed':
                     self.redirect(baseurl + '/status/failed.html')
                 if status == 'building':
-                    self.redirect(baseurl + '/status/building.html')
+                    self.render('static/status/building.html')
                 if status == 'completed':
                     r = requests.get(urljoin(endpoint, app_id))
                     redirectblob = r.json()
@@ -52,11 +52,14 @@ class CustomStatic(tornado.web.StaticFileHandler):
         baseurl = self.request.protocol + "://" + self.request.host
         self.redirect(baseurl + '/status/404.html')
 
+settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "static")
+}
 
 application = tornado.web.Application([
     (r"/repo/(?P<app_id>.*)", Redirector),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
-])
+], **settings)
 
 if __name__ == "__main__":
     tornado.log.enable_pretty_logging()

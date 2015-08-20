@@ -101,7 +101,7 @@
 			<h2>Your binder is building...</h2>
 			<p>Paste this into your README</p>
 			<div class='badge-link'><p>[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/<span id='badge-link-repo'>project/repo</span>)</p></div>
-			<p>to get this badge<img class='badge-logo' src='badge.svg'></img></p>
+			<p>to get this badge<a href='' class='simple-link' id='badge-link-logo'><img class='badge-logo' src='badge.svg'></img></a></p>
 		</div>
 		<div class='column-3'>
 			<p class='sidebar'>When your Binder is ready, anyone who clicks that link will get their own private environment with your notebooks. May take up to 10 minutes to build, patience please!</p>
@@ -134,7 +134,7 @@
 			<h2 class='failed'>Your Binder is still being built, please wait a few minutes before submitting again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>As soon as your Binder is finished you can sumbit this repo again. You might want to to that if your repo has been updated.</p>
+			<p class='sidebar'>As soon as this Binder is finished building you can submit your repo again. You might want to do that if your repo has been updated.</p>
 		</div>
 	</div>
 
@@ -374,6 +374,7 @@ $("#submit").click(function( event ) {
  	function badgeMessage() {
  		$('#spinner').fadeOut(100);
 		$('#badge-link-repo').text(repo)
+		$('#badge-link-logo').attr("href", "http://mybinder.org/repo/" + repo)
 		$('#badge').fadeIn(700)
 		$('html, body').animate({
 	    	scrollTop: $("#badge").offset().top
