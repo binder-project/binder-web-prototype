@@ -128,7 +128,7 @@
 		</div>
 	</div>
 
-	<div class='row' id='stillbuilding' style='margin-top:50px'>
+	<div class='row' id='building' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
 			<h2 class='failed'>Your Binder is still being built, please wait a few minutes before submitting again.</h2>
@@ -138,8 +138,18 @@
 		</div>
 	</div>
 
+	<div class='row' id='timeout' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'>Could not connect to the Binder service, try again later.</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>This probably means the service is temporarily down. If the problem persists, let us know in the <a href='http://gitter.im/bidner-project/binder' class='grayed'>chatroom</a>.</p>
+		</div>
+	</div>
+
 	<div class='row' style='margin-top: 40px; margin-bottom: 60px'>
-		<h1>questions? join the <a class='grayed' href='http://gitter.im/binder-project/binder'>chat</a>, see the <a class='grayed' href='http://github.com/binder-project/binder'>code</a></h1>
+		<h1>questions? join the <a href='http://gitter.im/binder-project/binder'>chat</a>, see the <a class='repo-link' href='http://github.com/binder-project/binder'>code</a></h1>
 	</div>
 
 	<div id="modal" class="dialog">
@@ -170,32 +180,28 @@ function onInputBlur(ev) {
 	}
 }
 
-$('#repo').click(function() {
+function clearMessages() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
-	$('#stillbuilding').fadeOut(100)
+	$('#building').fadeOut(100)
+	$('#timeout').fadeOut(100)
+}
+
+$('#repo').click(function() {
+	clearMessages()
 })
 
 $('#repo').select(function() {
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#stillbuilding').fadeOut(100)
+	clearMessages()
 })
 
 $('input[type=checkbox]').click(function() {
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#stillbuilding').fadeOut(100)
+	clearMessages()
 })
 
 $('input[type=radio]').click(function() {
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#stillbuilding').fadeOut(100)
+	clearMessages()
 })
 
 $("#dependency-requirements").click(function(event) {
@@ -233,10 +239,7 @@ $("#form").submit(function( event ) {
 
 $("#submit").click(function( event ) {
 
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#stillbuilding').fadeOut(100)
+	clearMessages()
 
 	var repo, postgres, spark, dependency
 	var payload = {}
@@ -289,16 +292,12 @@ $("#submit").click(function( event ) {
 
  				// if the repo exists, proceed to check status
  				success: function(data) {
- 					status()
+ 					getStatus()
  				},
 
  				// if the repo doesn't exist, throw an error
  				error: function(err) {
- 					$('#spinner').fadeOut(100);
- 					$('#norepo').fadeIn(700)
-			 		$('html, body').animate({
-			        	scrollTop: $("#norepo").offset().top
-			    	}, 700);
+ 					norepoMessage()
  				},
 
  				beforeSend: function() {
@@ -309,30 +308,33 @@ $("#submit").click(function( event ) {
  			)
  	}
 
- 	function status() {
+ 	function getStatus() {
 
  		$.ajax(
 
  			{
  				method: "GET",
  				url: "http://104.197.142.168:8080/apps/" + repo + "/status",
+ 				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
  				success: function(data) {
  					if (data.build_status == "building") {
- 						$('#spinner').fadeOut(100);
- 						$('#stillbuilding').fadeIn(700)
-				 		$('html, body').animate({
-				        	scrollTop: $("#stillbuilding").offset().top
-				    	}, 700);
+ 						buildingMessage()
  					} else {
- 						launch()
+ 						startLaunch()
  					}
  				},
 
  				// if we didn't get a status, proceed to launch
+ 				// unless there was a timeout, in which case
+ 				// the server is probably down
  				error: function(err) {
- 					launch()
+ 					if (err.statusText == "timeout") {
+ 						timeoutMessage()
+ 					} else {
+ 						startLaunch()
+ 					}
  				}
 
  			}
@@ -341,38 +343,73 @@ $("#submit").click(function( event ) {
 
  	}
 
- 	function launch() {
+ 	function startLaunch() {
  		$.ajax(
 
  			{
  				method: "POST",
  				url: "http://104.197.142.168:8080/apps/" + repo,
  				dataType: 'json',
- 				timeout: 5000,
+ 				timeout: 4000,
  				data: JSON.stringify(payload),
 
- 				// if the post was successful, show the link
+ 				// if the post was successful, show the badge
  				success: function(data) {
  					console.log('success')
- 					$('#spinner').fadeOut(100);
- 					$('#badge-link-repo').text(repo)
- 					$('#badge').fadeIn(700)
-			 		$('html, body').animate({
-			        	scrollTop: $("#badge").offset().top
-			    	}, 700);
+ 					badgeMessage()
  				},
 
  				// otherwise, throw an error
  				error: function(err) {
- 					console.log(err)
- 					$('#spinner').fadeOut(100);
- 					$('#failed').fadeIn(700)
-			 		$('html, body').animate({
-			        	scrollTop: $("#failed").offset().top
-			    	}, 700);	
+ 					if (err.statusText == "timeout") {
+ 						timeoutMessage()
+ 					} else {
+ 						failedMessage()
+ 					}
  				}
  			}
  		)
+ 	}
+
+ 	function badgeMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#badge-link-repo').text(repo)
+		$('#badge').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#badge").offset().top
+		}, 700);
+ 	}
+
+ 	function failedMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#failed').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#failed").offset().top
+		}, 700);	
+ 	}
+
+ 	function buildingMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#building').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#building").offset().top
+		}, 700);
+ 	}
+
+ 	function norepoMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#norepo').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#norepo").offset().top
+		}, 700);
+ 	}
+
+ 	function timeoutMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#timeout').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#timeout").offset().top
+		}, 700);
  	}
 
 });
