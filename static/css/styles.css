@@ -67,7 +67,7 @@ a:hover {
 	display: none;
 }
 
-#failed, #norepo {
+#failed, #norepo, #stillbuilding {
 	display: none;
 }
 

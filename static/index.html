@@ -121,6 +121,16 @@
 		</div>
 	</div>
 
+	<div class='row' id='stillbuilding' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'>Your Binder is still being built, please wait before submitting again.</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>As soon as your Binder is finished you can sumbit this repo again. You'll probably want to to that if your repo has been updated.</p>
+		</div>
+	</div>
+
 	<div class='row' style='margin-top: 40px; margin-bottom: 60px'>
 		<h1>questions? join the <a class='grayed' href='http://gitter.im/binder-project/binder'>chat</a>, see the <a class='grayed' href='http://github.com/binder-project/binder'>code</a></h1>
 	</div>
@@ -157,24 +167,28 @@ $('#repo').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#stillbuilding').fadeOut(100)
 })
 
 $('#repo').select(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#stillbuilding').fadeOut(100)
 })
 
 $('input[type=checkbox]').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#stillbuilding').fadeOut(100)
 })
 
 $('input[type=radio]').click(function() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#stillbuilding').fadeOut(100)
 })
 
 $("#dependency-requirements").click(function(event) {
@@ -262,10 +276,12 @@ $("#submit").click(function( event ) {
  				method: "GET",
  				url: "https://api.github.com/repos/" + repo,
 
+ 				// if the repo exists, proceed to check status
  				success: function(data) {
- 					launch()
+ 					status()
  				},
 
+ 				// if the repo doesn't exist, throw an error
  				error: function(err) {
  					$('#norepo').fadeIn(700)
 			 		$('html, body').animate({
@@ -277,6 +293,37 @@ $("#submit").click(function( event ) {
  			)
  	}
 
+ 	function status() {
+
+ 		$.ajax(
+
+ 			{
+ 				method: "GET",
+ 				url: "http:104.197.142.168:8080/apps/" + repo + "/status",
+
+ 				// if we retrieved the status, make sure it's not building
+ 				success: function(data) {
+ 					if (data.build_status == "building") {
+ 						$('#stillbuilding').fadeIn(700)
+				 		$('html, body').animate({
+				        	scrollTop: $("#stillbuilding").offset().top
+				    	}, 700);
+ 					} else {
+ 						launch()
+ 					}
+ 				},
+
+ 				// if we didn't get a status, proceed to launch
+ 				error: function(err) {
+ 					launch()
+ 				}
+
+ 			}
+
+ 			)
+
+ 	}
+
  	function launch() {
  		$.ajax(
 
@@ -284,9 +331,10 @@ $("#submit").click(function( event ) {
  				method: "POST",
  				url: "http://104.197.142.168:8080/apps/" + repo,
  				dataType: 'json',
- 				timeout: 2000,
+ 				timeout: 5000,
  				data: JSON.stringify(payload),
 
+ 				// if the post was successful, show the link
  				success: function(data) {
  					console.log('success')
  					$('#badge-link-repo').text(repo)
@@ -296,6 +344,7 @@ $("#submit").click(function( event ) {
 			    	}, 700);
  				},
 
+ 				// otherwise, throw an error
  				error: function(err) {
  					console.log(err)
  					$('#failed').fadeIn(700)
