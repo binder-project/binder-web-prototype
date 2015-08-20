@@ -46,20 +46,23 @@
 			<div class='number step-two-color'>2</div>
 		</div>
 		<div class='box column-5'>
-			<h2>Configure your build</h2>
+			<h2>Configure dependencies</h2>
 			<br>
 			<div class='dependency'>
-				<input type="radio" id="dependency-requirements" name="dependency-radio" value="requirements" class="dependency-checkbox">
-				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for Python dependencies</span>
+				<input type="radio" id="dependency-none" name="dependency-radio" value="none" class="dependency-checkbox">
+				<label for="dependency-none"><span><span></span></span></label><label for='dependency-none' span id="dependency-none-checkbox-text" class='checkbox-text'>none</label><span class='dependency-checkbox-info'>for basic Python projects</span>
 			</div>
-			<h3 style='margin-left: 10px'>or</h3>
+			<div class='dependency'>
+				<input type="radio" id="dependency-requirements" name="dependency-radio" value="requirements" class="dependency-checkbox">
+				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for custom Python projects</span>
+			</div>
 			<div class='dependency'>
 				<input type="radio" id="dependency-dockerfile" name="dependency-radio" value="dockerfile" class="dependency-checkbox">
 				<label for="dependency-dockerfile"><span><span></span></span></label><label for='dependency-dockerfile' span id="dependency-dockerfile-checkbox-text" class='checkbox-text'>Dockerfile</label><span class='dependency-checkbox-info'>for custom builds</span>
 			</div>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, leave this blank. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
+			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, select none. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
 		</div>
 	</div>
 
@@ -204,10 +207,17 @@ $('input[type=radio]').click(function() {
 	clearMessages()
 })
 
+var radio = $('#dependency-none');
+radio.prop('checked', true);
+var el = $('#dependency-none-checkbox-text')
+el.addClass('dependency-toggle')
+
 $("#dependency-requirements").click(function(event) {
 	var el = $('#dependency-requirements-checkbox-text')
 	el.addClass('dependency-toggle')
 	var el = $('#dependency-dockerfile-checkbox-text')
+	el.removeClass('dependency-toggle')
+	var el = $('#dependency-none-checkbox-text')
 	el.removeClass('dependency-toggle')
 })
 
@@ -215,6 +225,17 @@ $("#dependency-dockerfile").click(function(event) {
 	var el = $('#dependency-dockerfile-checkbox-text')
 	el.addClass('dependency-toggle')
 	var el = $('#dependency-requirements-checkbox-text')
+	el.removeClass('dependency-toggle')
+	var el = $('#dependency-none-checkbox-text')
+	el.removeClass('dependency-toggle')
+})
+
+$("#dependency-none").click(function(event) {
+	var el = $('#dependency-none-checkbox-text')
+	el.addClass('dependency-toggle')
+	var el = $('#dependency-requirements-checkbox-text')
+	el.removeClass('dependency-toggle')
+	var el = $('#dependency-dockerfile-checkbox-text')
 	el.removeClass('dependency-toggle')
 })
 
