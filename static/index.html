@@ -7,6 +7,7 @@
 <title>binder</title>
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/shelves.css">
+<link rel="stylesheet" href="css/spinner.css" type="text/css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <link rel="icon" sizes="16x16 32x32" href="favicon.ico?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -85,6 +86,12 @@
 	<div class='row' style='margin-bottom: 20px; margin-top: 50px'>
 		<div class='launch'>
 			<button id='submit' class='submit'>make</button><span>my binder</span>
+		</div>
+	</div>
+
+	<div class='row' id='spinner' style='display: none; margin-top: 60px'>
+		<div class="three-quarters-loader">
+	  		Loading…
 		</div>
 	</div>
 
@@ -219,6 +226,7 @@ $("#service-spark").click(function(event) {
 	el.toggleClass('show-hide')
 })
 
+
 $("#form").submit(function( event ) {
   event.preventDefault();
 });
@@ -226,6 +234,9 @@ $("#form").submit(function( event ) {
 $("#submit").click(function( event ) {
 
 	$('#badge').fadeOut(100)
+	$('#failed').fadeOut(100)
+	$('#norepo').fadeOut(100)
+	$('#stillbuilding').fadeOut(100)
 
 	var repo, postgres, spark, dependency
 	var payload = {}
@@ -283,10 +294,15 @@ $("#submit").click(function( event ) {
 
  				// if the repo doesn't exist, throw an error
  				error: function(err) {
+ 					$('#spinner').fadeOut(100);
  					$('#norepo').fadeIn(700)
 			 		$('html, body').animate({
 			        	scrollTop: $("#norepo").offset().top
 			    	}, 700);
+ 				},
+
+ 				beforeSend: function() {
+ 					$('#spinner').fadeIn(300);
  				}
  			}
 
@@ -304,6 +320,7 @@ $("#submit").click(function( event ) {
  				// if we retrieved the status, make sure it's not building
  				success: function(data) {
  					if (data.build_status == "building") {
+ 						$('#spinner').fadeOut(100);
  						$('#stillbuilding').fadeIn(700)
 				 		$('html, body').animate({
 				        	scrollTop: $("#stillbuilding").offset().top
@@ -337,6 +354,7 @@ $("#submit").click(function( event ) {
  				// if the post was successful, show the link
  				success: function(data) {
  					console.log('success')
+ 					$('#spinner').fadeOut(100);
  					$('#badge-link-repo').text(repo)
  					$('#badge').fadeIn(700)
 			 		$('html, body').animate({
@@ -347,6 +365,7 @@ $("#submit").click(function( event ) {
  				// otherwise, throw an error
  				error: function(err) {
  					console.log(err)
+ 					$('#spinner').fadeOut(100);
  					$('#failed').fadeIn(700)
 			 		$('html, body').animate({
 			        	scrollTop: $("#failed").offset().top
