@@ -6,7 +6,7 @@ from tornado.options import define, options
 
 from urlparse import urljoin
 
-define("api", default="104.197.142.168", help="IP address for binder API endpoint")
+define("api", default="104.154.66.41", help="IP address for binder API endpoint")
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
