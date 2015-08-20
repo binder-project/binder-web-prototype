@@ -134,10 +134,10 @@
 	<div class='row' id='building' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
-			<h2 class='failed'>Your Binder is still being built, please wait a few minutes before submitting again.</h2>
+			<h2 class='failed'>Your Binder is still being built, you can check in on it <a class='grayed' id='building-link' href=''>here</a>.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>As soon as this Binder is finished building you can submit your repo again. You might want to do that if your repo has been updated.</p>
+			<p class='sidebar'>As soon as this Binder is finished building you can submit your repo again. You might want to do so if your repo has been updated.</p>
 		</div>
 	</div>
 
@@ -413,6 +413,7 @@ $("#submit").click(function( event ) {
  	function buildingMessage() {
  		$('#spinner').fadeOut(100);
 		$('#building').fadeIn(700)
+		$('#building-link').attr("href", "http://mybinder.org/repo/" + repo)
 		$('html, body').animate({
 	    	scrollTop: $("#building").offset().top
 		}, 700);
