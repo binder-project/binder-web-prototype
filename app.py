@@ -54,7 +54,7 @@ class CustomStatic(tornado.web.StaticFileHandler):
 
 
 application = tornado.web.Application([
-    (r"/apps/(?P<app_id>.*)", Redirector),
+    (r"/repo/(?P<app_id>.*)", Redirector),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ])
 
