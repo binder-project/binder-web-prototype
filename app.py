@@ -26,7 +26,7 @@ class Redirector(tornado.web.RequestHandler):
             self.redirect(baseurl + '/status/missing.html')
         
         if r.status_code == 200:
-            blob = r.json()
+            blob = r.json()        
             if 'build_status' in blob:
                 status = blob['build_status']
                 if status == 'failed':
@@ -34,13 +34,17 @@ class Redirector(tornado.web.RequestHandler):
                 if status == 'building':
                     self.render('static/status/building.html')
                 if status == 'completed':
-                    r = requests.get(urljoin(endpoint, app_id))
-                    redirectblob = r.json()
-                    if 'redirect_url' in redirectblob:
-                        url = redirectblob['redirect_url']
-                        self.redirect(url)
-                    else:
-                        self.redirect(baseurl + '/status/unknown.html')
+                    self.render('static/status/capacity.html')
+                    # r = requests.get(urljoin(endpoint, app_id))
+                    # redirectblob = r.json()
+                    # if 'redirect_url' in redirectblob:
+                    #     try:
+                    #         url = redirectblob['redirect_url']
+                    #         self.redirect(url)
+                    #     except:
+                    #         self.render('static/status/capacity.html')
+                    # else:
+                    #     self.redirect(baseurl + '/status/unknown.html')
             else:
                 self.redirect(baseurl + '/status/unknown.html')
 
