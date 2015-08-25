@@ -355,10 +355,10 @@ $("#submit").click(function( event ) {
  				// unless there was a timeout, in which case
  				// the server is probably down
  				error: function(err) {
- 					if (err.statusText == "timeout") {
- 						timeoutMessage()
- 					} else {
+ 					if (err.statusText == "Not Found") {
  						startLaunch()
+ 					} else {
+ 						timeoutMessage()
  					}
  				}
 
