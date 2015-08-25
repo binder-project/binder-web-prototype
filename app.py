@@ -44,7 +44,7 @@ class Redirector(tornado.web.RequestHandler):
                         # check for capacity
                         r = requests.get(url='http://' + options.api + ':8080/capacity')
                         check = r.json()
-                        if check['running'] > check['capacity']:
+                        if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')
                         else:
                             try:
