@@ -20,42 +20,56 @@ class Redirector(tornado.web.RequestHandler):
 
         baseurl = self.request.protocol + "://" + self.request.host
         endpoint = 'http://' + options.api + ':8080/apps/'
-
-        r = requests.get(urljoin(endpoint, app_id + '/status'))
-
-        if r.status_code == 404:
-            logging.info('cannot get status')
-            logging.info('sending missing message')
-            self.redirect(baseurl + '/status/missing.html')
         
-        if r.status_code == 200:
-            logging.info('status retrieved')
-            blob = r.json()        
-            if 'build_status' in blob:
-                status = blob['build_status']
-                if status == 'failed':
-                    logging.debug('sending failed message')
-                    self.redirect(baseurl + '/status/failed.html')
-                if status == 'building':
-                    logging.debug('sending build message')
-                    self.render('static/status/building.html')
-                if status == 'completed':
-                    # make request with a timeout in case we're at capacity
-                    try:
-                        r = requests.get(url=urljoin(endpoint, app_id), timeout=(10.0, 10.0))
-                        redirectblob = r.json()
-                        if 'redirect_url' in redirectblob:
-                            url = redirectblob['redirect_url']
-                            self.redirect(url)
-                        else:
-                            self.redirect(baseurl + '/status/unknown.html')
-                    except Exception as e:
-                        self.timeout_handler(e)
+        try:
+            r = requests.get(urljoin(endpoint, app_id + '/status'))
 
-            else:
-                self.redirect(baseurl + '/status/unknown.html')
+            if r.status_code == 404:
+                logging.info('cannot get status')
+                logging.info('sending missing message')
+                self.redirect(baseurl + '/status/missing.html')
+            
+            if r.status_code == 200:
+                logging.info('status retrieved')
+                blob = r.json()        
+                if 'build_status' in blob:
+                    status = blob['build_status']
+                    if status == 'failed':
+                        logging.debug('sending failed message')
+                        self.redirect(baseurl + '/status/failed.html')
+                    if status == 'building':
+                        logging.debug('sending build message')
+                        self.render('static/status/building.html')
+                    if status == 'completed':
+                        # check for capacity
+                        r = requests.get(url='http://' + options.api + ':8080/capacity')
+                        check = r.json()
+                        if check['running'] > check['capacity']:
+                            self.render('static/status/capacity.html')
+                        else:
+                            try:
+                                r = requests.get(url=urljoin(endpoint, app_id), timeout=(10.0, 10.0))
+                                redirectblob = r.json()
+                                if 'redirect_url' in redirectblob:
+                                    url = redirectblob['redirect_url']
+                                    self.redirect(url)
+                                else:
+                                    self.redirect(baseurl + '/status/unknown.html')
+                            except Exception as e:
+                                self.timeout_handler(e)
+
+                else:
+                    self.redirect(baseurl + '/status/unknown.html')
+
+        except Exception as e:
+            self.error_handler(e)
 
     def timeout_handler(self, e):
+        """
+        Handler that checks for timeouts
+        (useful if we expect timeouts at particular stages)
+        """
+        baseurl = self.request.protocol + "://" + self.request.host
         logging.error(e)
         if isinstance(e, (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout)):
             logging.info('sending at capacity message')
@@ -63,6 +77,14 @@ class Redirector(tornado.web.RequestHandler):
         else:
             logging.info('sending unknown error message')
             self.redirect(baseurl + '/status/unknown.html')
+
+    def error_handler(self, e):
+        """
+        Handler for generic errors
+        """
+        baseurl = self.request.protocol + "://" + self.request.host
+        logging.error(e)
+        self.redirect(baseurl + '/status/unknown.html')
 
 class CustomStatic(tornado.web.StaticFileHandler):
     """
@@ -79,7 +101,7 @@ settings = {
 application = tornado.web.Application([
     (r"/repo/(?P<app_id>.*)", Redirector),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
-], **settings)
+], autoreload=True, **settings)
 
 if __name__ == "__main__":
     tornado.log.enable_pretty_logging()

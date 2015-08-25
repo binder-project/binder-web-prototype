@@ -26,6 +26,11 @@ a {
 	transition: all 0.2s;
 }
 
+hr {
+	border: dotted 1px rgb(100,100,100);
+	width: 25%;
+}
+
 .simple-link {
 	border-bottom: none;
 }
