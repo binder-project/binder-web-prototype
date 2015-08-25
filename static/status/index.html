@@ -70,11 +70,15 @@ $.ajax(
 
 		// if we can't connect to the capacity server, throw an error
 		error: function(err) {
+			console.log('test')
 			$('#state').text('down')
 			$('#state').css('color', 'rgb(227,46,23)')
 			$('#free').text("0")
 			$('#free').css('color', 'rgb(227,46,23)')
 			$('#total').text("?")
+			$('#message').fadeOut(300, function() {
+				$('#status').fadeIn(300);
+			});	
 		},
 
 		beforeSend: function() {
