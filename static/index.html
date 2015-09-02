@@ -33,7 +33,7 @@
 		<div class='box column-5'>
 			<h2>Tell us your GitHub repo</h2>
 			<form id='form'>
-				<input class='step-one' id='repo' type="text" placeholder='organization/project  OR  user/project'>
+				<input class='step-one' id='repo' type="text" placeholder='user/project OR github url'>
 			</form>
 		</div>
 		<div class='column-3'>
@@ -124,10 +124,10 @@
 	<div class='row' id='norepo' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
-			<h2 class='failed'>Oops, that GitHub repo does not exist. Double check the repo name and try again.</h2>
+			<h2 class='failed'>Oops, the GitHub repo does not exist. Double check the repo name and try again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Make sure you're entering a valid repository.</p>
+			<p class='sidebar'>The name you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's a valid repository.</p>
 		</div>
 	</div>
 
@@ -309,6 +309,13 @@ $("#submit").click(function( event ) {
 
  	} else {
 
+ 		// strip http or https
+ 		repo = repo.replace('https://github.com/','')
+ 		repo = repo.replace('http://github.com/','')
+
+ 		// strip .git (if pasted from github)
+ 		repo = repo.replace('.git', '')
+
  		$.ajax(
 
  			{
@@ -425,7 +432,8 @@ $("#submit").click(function( event ) {
 
  	function norepoMessage() {
  		$('#spinner').fadeOut(100);
-		$('#norepo').fadeIn(700)
+ 		$('#norepo-name').text(repo);
+		$('#norepo').fadeIn(700);
 		$('html, body').animate({
 	    	scrollTop: $("#norepo").offset().top
 		}, 700);
