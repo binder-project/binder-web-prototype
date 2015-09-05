@@ -54,7 +54,11 @@
 			</div>
 			<div class='dependency'>
 				<input type="radio" id="dependency-requirements" name="dependency-radio" value="requirements" class="dependency-checkbox">
-				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for custom Python projects</span>
+				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for pip Python projects</span>
+			</div>
+			<div class='dependency'>
+				<input type="radio" id="dependency-conda" name="dependency-radio" value="conda" class="dependency-checkbox">
+				<label for="dependency-conda"><span><span></span></span></label><label for='dependency-conda' id='dependency-conda-checkbox-text' class='checkbox-text'>environment.yml</label><span class='dependency-checkbox-info'>for conda Python projects</span>
 			</div>
 			<div class='dependency'>
 				<input type="radio" id="dependency-dockerfile" name="dependency-radio" value="dockerfile" class="dependency-checkbox">
@@ -62,7 +66,7 @@
 			</div>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, select none. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
+			<p class='sidebar'>Four modes are supported. If your notebooks only use scientific Python, select none. If they have Python dependencies, select either requirements.txt (for pip) or environment.yml (for conda) and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
 		</div>
 	</div>
 
@@ -217,30 +221,23 @@ var el = $('#dependency-none-checkbox-text')
 el.addClass('dependency-toggle')
 
 $("#dependency-requirements").click(function(event) {
-	var el = $('#dependency-requirements-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-none-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-requirements-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#dependency-dockerfile").click(function(event) {
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-requirements-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-none-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-dockerfile-checkbox-text').addClass('dependency-toggle')
+})
+
+$("#dependency-conda").click(function(event) {
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-conda-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#dependency-none").click(function(event) {
-	var el = $('#dependency-none-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-requirements-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-none-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#service-postgres").click(function(event) {
@@ -292,6 +289,9 @@ $("#submit").click(function( event ) {
  	
  	if (dependency == 'requirements') {
  		payload['dependencies'].push("requirements.txt")
+ 	}
+ 	if (dependency == 'conda') {
+ 		payload['dependencies'].push("environment.yml")
  	}
  	if (dependency == 'dockerfile') {
  		payload['dependencies'].push("Dockerfile")
