@@ -18,6 +18,10 @@ class Redirector(tornado.web.RequestHandler):
     """
     def get(self, org, repo, location=None):
 
+        # strip trailing /
+        if repo[-1] == '/':
+            repo = repo[:-1]
+
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
