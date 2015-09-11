@@ -82,12 +82,7 @@ class Redirector(tornado.web.RequestHandler):
         """
         baseurl = self.request.protocol + "://" + self.request.host
         logging.error(e)
-        if isinstance(e, (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout)):
-            logging.info('sending at capacity message')
-            self.render('static/status/capacity.html')
-        else:
-            logging.info('sending unknown error message')
-            self.redirect(baseurl + '/status/unknown.html')
+        self.redirect(baseurl + '/status/unknown.html')
 
     def error_handler(self, e):
         """
