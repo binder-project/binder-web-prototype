@@ -16,8 +16,14 @@ class Redirector(tornado.web.RequestHandler):
     """
     Redirect calls to the Binder API depending on status
     """
-    def get(self, app_id):
+    def get(self, org, repo, location=None):
 
+        # strip trailing /
+        if repo[-1] == '/':
+            repo = repo[:-1]
+
+        # get locations
+        app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
         endpoint = 'http://' + options.api + ':8080/apps/'
         
@@ -52,7 +58,12 @@ class Redirector(tornado.web.RequestHandler):
                                 redirectblob = r.json()
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']
-                                    self.redirect(url)
+                                    if location is not None and location != '':
+                                        logging.debug('redirecting to: %s' % url + "/notebooks/" + location)
+                                        self.redirect(url + "/notebooks/" + location)
+                                    else:
+                                        logging.debug('redirecting to: %s' % url)
+                                        self.redirect(url)
                                 else:
                                     self.redirect(baseurl + '/status/unknown.html')
                             except Exception as e:
@@ -99,7 +110,8 @@ settings = {
 }
 
 application = tornado.web.Application([
-    (r"/repo/(?P<app_id>.*)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
 
