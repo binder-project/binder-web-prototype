@@ -59,7 +59,7 @@ class Redirector(tornado.web.RequestHandler):
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']
                                     if location is not None and location != '':
-                                        logging.debug('redirecting to: %s' % url + "/" + location)
+                                        logging.debug('redirecting to: %s' % url + "/notebooks/" + location)
                                         self.redirect(url + "/notebooks/" + location)
                                     else:
                                         logging.debug('redirecting to: %s' % url)
