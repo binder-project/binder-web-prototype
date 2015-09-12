@@ -12,6 +12,14 @@ define("api", default="104.197.142.168", help="IP address for binder API endpoin
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
 
+class Building(tornado.web.RequestHandler):
+    """
+    Show building status for an app
+    """
+    def get(self, org, repo):
+        repo = org + "/" + repo
+        self.render('static/status/building.html', repo=repo)
+
 class Redirector(tornado.web.RequestHandler):
     """
     Redirect calls to the Binder API depending on status
@@ -82,12 +90,7 @@ class Redirector(tornado.web.RequestHandler):
         """
         baseurl = self.request.protocol + "://" + self.request.host
         logging.error(e)
-        if isinstance(e, (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout)):
-            logging.info('sending at capacity message')
-            self.render('static/status/capacity.html')
-        else:
-            logging.info('sending unknown error message')
-            self.redirect(baseurl + '/status/unknown.html')
+        self.redirect(baseurl + '/status/unknown.html')
 
     def error_handler(self, e):
         """
@@ -110,6 +113,7 @@ settings = {
 }
 
 application = tornado.web.Application([
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/status", Building),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
