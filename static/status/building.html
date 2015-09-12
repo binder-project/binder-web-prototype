@@ -7,6 +7,7 @@
 <title>binder</title>
 <link rel="stylesheet" href="{{ static_url('css/shelves.css') }}">
 <link rel="stylesheet" href="{{ static_url('css/styles.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/spinner.css') }}" type="text/css">
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <link rel="icon" sizes="16x16 32x32" href="{{ static_url('favicon.ico')}}?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,11 +18,154 @@
 		<a class='simple-link' href='http://mybinder.org'><img class='logo' src="{{ static_url('images/logo.svg') }}"></img></a>
 	</div>
 	<div class='row'>
-		<h1>Your Binder is still being built...</h1>
-		<hr>
-		<h1>Refresh this page in a couple minutes to check again.</h1>
+		<h1 style='margin-bottom:3px'>build status</h1>
+		<h1 id='tracker-repo' style='font-size: 22px; margin-bottom: 24px; margin-top: 0px'>{{ repo }}</h1>
+		<div class='row' id='tracker'>
+			<div id='stages' class='box' style='width: 60%; margin: 0 auto; text-align: center'>
+				<div class='row' id='spinner' style='display: none; margin-top: 60px'>
+					<div class="three-quarters-loader" style='color: white'>
+				  		Loading…
+					</div>
+				</div>
+				<div id='not-found' style='display: none'>
+					<h2>Binder could not be found<br>
+					Double check your address,<br>or return <a class='grayed' href='http://mybinder.org'>home</a> and rebuild your Binder.</h2>
+				</div>
+				<div id='connection-error' style='display: none'>
+					<h2>Error connecting to server.<br>
+					Check system <a class='grayed' href='http://mybinder.org/status'>status</a>, and try later.</h2>
+				</div>
+				<div id='build-failed' style='display: none'>
+					<h2>Uh oh, your build failed.<br>
+					Check the logs below, and return <a class='grayed' href='http://mybinder.org'>home</a> to try again.</h2>
+				</div>
+				<div class='row' id='tracker-progress' style='display: none'>
+					<div class='stage column-4'>
+						<h1 class='stage-name'>Submitted</h1>
+						<hr id='progress' class='progress-init'>
+						<div id='circle-submitted' class='circle'></div>
+					</div>
+					<div class='stage column-4'>
+						<h1 class='stage-name'>Building</h1>
+						<div id='circle-building' class='circle'></div>
+					</div>
+					<div class='stage column-4'>
+						<h1 class='stage-name'>Deployed</h1>
+						<div id='circle-deployed' class='circle'></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<h1 style='margin-bottom:24px'>logs</h1>
+		<div class='row' id='logs' style='margin-bottom:50px'>
+			<div class='box log-box' style='width: 60%; margin: 0 auto'>
+				Code code code
+			</div>
+		</div>
 	</div>
+
+	
 
 </body>
 
 </html>
+
+<script>
+
+var repo = "{{ repo }}"
+var endpoint = "http://104.197.142.168:8080/apps/" + repo + "/status"
+
+var status
+var completed = false
+init()
+
+setInterval( function() { 
+		if (completed == false) {
+			console.log('updating')
+			update()
+		}
+	}, 
+	2000
+);
+
+function init() {
+
+	$.ajax(
+		{
+			method: "GET",
+			url: endpoint,
+			timeout: 4000,
+
+			// 
+			success: function(data) {
+				$('#spinner').fadeOut(200, function() {
+					status = data.build_status
+					$('#tracker-progress').fadeIn(200);
+					if (status == "building") {
+						set_building()
+					} else if (status == "completed") {
+						set_completed()
+					} else if (status == "error") {
+						$('#spinner').fadeOut(200, function() {
+							$('#not-found').fadeIn(200);
+						});
+					}
+				});
+			},
+
+			// 
+			error: function(err) {
+				if (err.statusText == "Not Found") {
+					$('#spinner').fadeOut(200, function() {
+						$('#not-found').fadeIn(200);
+					});
+				} else {
+					$('#spinner').fadeOut(200, function() {
+						$('#build-failed').fadeIn(200);
+					});
+				}
+			},
+
+			beforeSend: function() {
+				$('#spinner').fadeIn(300);
+			}
+		}
+	)
+}
+
+function update() {
+
+	$.ajax(
+		{
+			method: "GET",
+			url: endpoint,
+			timeout: 2000,
+
+			success: function(data) {
+				if (data.build_status == "building") {
+					set_building()
+				} else if (data.build_status == "completed") {
+					set_completed()
+				}
+			}
+		}
+	)
+}
+
+function set_building() {
+	$('#circle-submitted').addClass('circle-success')
+	$('#circle-building').addClass('circle-success')
+	$('#progress').addClass('progress-building')
+}
+
+function set_completed() {
+	$('#circle-submitted').addClass('circle-success')
+	$('#circle-building').addClass('circle-success')
+	$('#circle-deployed').addClass('circle-success')
+	$('#progress').removeClass('progress-building')
+	$('#progress').addClass('progress-completed')
+	completed = true 
+}
+
+</script>
