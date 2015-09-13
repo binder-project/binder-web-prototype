@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="{{ static_url('css/styles.css') }}">
 <link rel="stylesheet" href="{{ static_url('css/spinner.css') }}" type="text/css">
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{{ static_url('js/jquery.jscrollpane.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/jquery.mousewheel.js') }}"></script>
+<link type="text/css" href="{{ static_url('css/jquery.jscrollpane.css') }}" rel="stylesheet" media="all" />
 <link rel="icon" sizes="16x16 32x32" href="{{ static_url('favicon.ico')}}?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <html>
@@ -58,9 +61,16 @@
 		</div>
 
 		<h1 style='margin-bottom:24px'>logs</h1>
-		<div class='row' id='logs' style='margin-bottom:50px'>
-			<div class='box log-box' style='width: 60%; margin: 0 auto'>
-				Code code code
+		<div class='row' style='margin-bottom:50px'>
+			<div id='log-box' class='box log-box' style='width: 60%; margin: 0 auto'>
+				<div id='logs' class='logs'>
+					<p class='log-text'> </p>
+				</div>
+				<div class="spinner">
+				  <div class="bounce1"></div>
+				  <div class="bounce2"></div>
+				  <div class="bounce3"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -72,6 +82,29 @@
 </html>
 
 <script>
+
+
+var settings = {
+	stickToBottom: true,
+	maintainPosition: true
+};
+var pane = $('#logs')
+pane.jScrollPane(settings);
+var api = pane.data('jsp');
+var i = 1;
+
+// Every second add some new content...
+setInterval(
+	function()
+	{
+		api.getContentPane().append(
+			$("<p class='log-text'/>").text('This is paragraph number ' + i++)
+		);
+		api.reinitialise();
+	},
+	500
+);
+
 
 var repo = "{{ repo }}"
 var endpoint = "http://104.197.142.168:8080/apps/" + repo + "/status"
