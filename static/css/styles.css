@@ -524,14 +524,18 @@ h3 {
 	font-size: 18px;
 }
 
+#logs-continuing {
+	transition: all 0.25s;
+}
+
 .jspTrack {
 	background: rgb(230,231,232) !important;
-	border-radius: 6px;
+	border-radius: 10px;
 }
 
 .jspDrag {
 	background: rgb(200,200,200) !important;
-	border-radius: 6px;
+	border-radius: 10px;
 }
 
 .jspTrack .jspActive,
@@ -553,8 +557,9 @@ h3 {
 }
 
 .spinner > div {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
   background-color: rgb(230,231,232);
 
   border-radius: 100%;
