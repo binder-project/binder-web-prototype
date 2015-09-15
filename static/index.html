@@ -155,6 +155,16 @@
 		</div>
 	</div>
 
+	<div class='row' id='github' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'>Could not check repo through GitHub, try again later.</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>This is probably a temporary issue. If the problem persists, let us know in the <a href='http://gitter.im/bidner-project/binder' class='grayed'>chatroom</a>.</p>
+		</div>
+	</div>
+
 	<div class='row' style='margin-top: 40px; margin-bottom: 20px'>
 		<h1>questions? join the <a href='http://gitter.im/binder-project/binder'>chat</a>, see the <a class='repo-link' href='http://github.com/binder-project/binder'>code</a></h1>
 	</div>
@@ -190,6 +200,7 @@ function clearMessages() {
 	$('#invalid').fadeOut(100)
 	$('#building').fadeOut(100)
 	$('#timeout').fadeOut(100)
+	$('#github').fadeOut(100)
 }
 
 $('#repo').click(function() {
@@ -311,7 +322,7 @@ $("#submit").click(function( event ) {
 
  		if ((repo.indexOf('/') < 0) | (repo.indexOf(' ') > -1)) {
  			
- 			invalidMessage('Oops, that repo name appears badly formatted')
+ 			invalidMessage('Oops, that repo name seems badly formatted')
 
  		} else {
 
@@ -331,6 +342,10 @@ $("#submit").click(function( event ) {
 	 					} else {
 	 						invalidMessage(data.msg)
 	 					}
+	 				},
+
+	 				error: function(err) {
+	 					githubMessage()
 	 				},
 
 	 				beforeSend: function() {
@@ -450,6 +465,14 @@ $("#submit").click(function( event ) {
 		$('#timeout').fadeIn(700)
 		$('html, body').animate({
 	    	scrollTop: $("#timeout").offset().top
+		}, 700);
+ 	}
+
+ 	function githubMessage() {
+ 		$('#spinner').fadeOut(100);
+		$('#github').fadeIn(700)
+		$('html, body').animate({
+	    	scrollTop: $("#github").offset().top
 		}, 700);
  	}
 
