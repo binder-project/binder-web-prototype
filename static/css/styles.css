@@ -274,10 +274,11 @@ input[type=text] {
 }
 
 .log-text {
-	margin-bottom: 6px;
+	margin-bottom: 7px;
 	margin-top: 0px;
 	font-family: Consolas;
 	color: rgb(120,120,120);
+	font-size: 14px;
 }
 
 input[type=text] {
@@ -528,6 +529,9 @@ h3 {
 	transition: all 0.25s;
 }
 
+
+/* jquery-based custom scroll box */
+
 .jspTrack {
 	background: rgb(230,231,232) !important;
 	border-radius: 10px;
@@ -548,7 +552,7 @@ h3 {
 	background: white !important;
 }
 
-
+/* custom spinner */
 
 .spinner {
   margin-top: 20px;

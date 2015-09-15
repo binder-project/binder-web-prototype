@@ -40,7 +40,7 @@
 				</div>
 				<div id='build-failed' style='display: none'>
 					<h2>Uh oh, your build failed.<br>
-					Check the logs below, and return <a class='grayed' href='http://mybinder.org'>home</a> to try again.</h2>
+					Check the logs, and go <a class='grayed' href='http://mybinder.org'>home</a> to try again.</h2>
 				</div>
 				<div class='row' id='tracker-progress' style='display: none'>
 					<div class='stage column-4'>
@@ -100,23 +100,37 @@ var i = 1;
 
 
 var repo = "{{ repo }}"
-var endpoint = "http://104.197.142.168:8080/apps/" + repo + "/status"
+var endpoint = "http://104.197.23.111:8080/apps/" + repo + "/status"
+var ws = new WebSocket("ws://104.197.23.111:8080/apps/" + repo + "/logs")
+
+ws.onopen = function(){
+ 	console.log('ws connection opened')
+};
+
+ws.onmessage = function(ev){
+	console.log('got message from websocket')
+ 	update_log(ev.data.slice(24))
+};
+
+ws.onclose = function(ev){
+	console.log('closing')
+};
 
 var status
 var completed = false
-init()
+init_status()
 
 setInterval( function() 
 	{ 
-		console.log('updating')
+		console.log('updating status')
 		if (completed == false) {
-			update()
+			update_status()
 		}
 	}, 
 	2000
 );
 
-function init() {
+function init_status() {
 
 	$.ajax(
 		{
@@ -126,34 +140,28 @@ function init() {
 
 			// 
 			success: function(data) {
+				console.log(data)
 				$('#tracker-loading').fadeOut(200, function() {
 					status = data.build_status
-					$('#tracker-progress').fadeIn(200);
 					if (status == "building") {
+						$('#tracker-progress').fadeIn(200);
 						set_building()
 					} else if (status == "completed") {
+						$('#tracker-progress').fadeIn(200);
 						set_completed()
 					} else if (status == "failed") {
-						$('#tracker-loading').fadeOut(200, function() {
-							$('#build-failed').fadeIn(200);
-						});
+						$('#build-failed').fadeIn(200);
+					} else {
+						$('#build-failed').fadeIn(200);
 					}
 				});
 				$('#logs-loading').fadeOut(200, function() {
 					if (status == "completed") {
 						$('#logs-continuing').css('opacity', '1.0')
-						setInterval(
-							function()
-							{
-								api.getContentPane().append(
-									$("<p class='log-text'/>").text('This is paragraph number ' + i++)
-								);
-								api.reinitialise();
-							},
-							500
-						);
-					} else {
+					} else if (status == "failed") {
 						$('#logs-continuing').css('opacity', '1.0')
+					} else {
+						no_logs()
 					}
 					
 				})
@@ -187,7 +195,14 @@ function init() {
 	)
 }
 
-function update() {
+function update_log(content) {
+	api.getContentPane().append(
+		$("<p class='log-text' style='display:none'/>").fadeIn(200).text(content)
+	);
+	api.reinitialise();
+}
+
+function update_status() {
 
 	$.ajax(
 		{
