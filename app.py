@@ -13,7 +13,7 @@ define("api", default="104.197.142.168", help="IP address for binder API endpoin
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
 
-class Submit(tornado.web.RequestHandler):
+class Validate(tornado.web.RequestHandler):
     """
     Handle submissions by checking against repos on GitHub
     """
@@ -27,19 +27,20 @@ class Submit(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         submission = json.loads(self.get_argument("submission"))
         repo = self.get_argument("repo")
+        deps = submission['dependencies']
 
         # get the top-level contents of the repo
-        from github import UnknownObjectException
+        from github import UnknownObjectException, GithubException
 
         gituser = Github(github_username, github_pass)
-        gitrepo = gituser.get_repo(repo)
-
+        
         try:
+            gitrepo = gituser.get_repo(repo)
             contents = gitrepo.get_dir_contents('/')
             names = [str(c.name) for c in contents]
 
-            def exists(filename):
-                if submission['dependencies'] == [filename] and filename in names:
+            def missing(filename):
+                if (deps == [filename]) and (filename not in names):
                     return True
                 else:
                     return False
@@ -47,10 +48,10 @@ class Submit(tornado.web.RequestHandler):
             # check for submission errors
             response = {'success': True, 'msg': ''}
             for name in ['requirements.txt', 'environment.yml', 'Dockerfile']:
-                if not exists(name):
-                    response = {'success': False, 'msg': "There's no %s in your repository" % n}
+                if missing(name):
+                    response = {'success': False, 'msg': "There's no %s in your repo" % name}
 
-        except UnknownObjectException:
+        except UnknownObjectException, GithubException:
             response = {'success': False, 'msg': 'Oops, that repo does not exist'}
 
 
@@ -152,7 +153,7 @@ settings = {
 application = tornado.web.Application([
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
-    (r"/submit/", Submit),
+    (r"/validate/", Validate),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
 

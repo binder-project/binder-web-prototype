@@ -125,23 +125,13 @@
 		</div>
 	</div>
 
-	<div class='row' id='norepo' style='margin-top:50px'>
-		<div class='column-2'></div>
-		<div class='box column-5'>
-			<h2 class='failed'>Oops, that GitHub repo does not exist. Double check the repo name and try again.</h2>
-		</div>
-		<div class='column-3'>
-			<p class='sidebar'>The name you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's a valid repository.</p>
-		</div>
-	</div>
-
 	<div class='row' id='invalid' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
 			<h2 class='failed'><span id='repo-error'></span>, double check the repo and try again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>The repo you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's correct and that the contents match your build specification.</p>
+			<p class='sidebar'>The repo you entered was <a id='norepo-name' class='grayed'></a>, make sure that's correct and that the contents match your build specification.</p>
 		</div>
 	</div>
 
@@ -319,30 +309,38 @@ $("#submit").click(function( event ) {
  		// strip .git (if pasted from github)
  		repo = repo.replace('.git', '')
 
- 		$.ajax(
+ 		if ((repo.indexOf('/') < 0) | (repo.indexOf(' ') > -1)) {
+ 			
+ 			invalidMessage('Oops, that repo name appears badly formatted')
 
- 			{
- 				method: "POST",
- 				url: "/submit/",
- 				dataType: 'json',
- 				timeout: 4000,
- 				data: {submission: JSON.stringify(payload), repo: repo},
+ 		} else {
 
- 				// check the status of the repo
- 				success: function(data) {
- 					if (data.success == true) {
- 						getStatus()
- 					} else {
- 						invalidMessage(data.msg)
- 					}
- 				},
+	 		$.ajax(
 
- 				beforeSend: function() {
- 					$('#spinner').fadeIn(300);
- 				}
- 			}
+	 			{
+	 				method: "POST",
+	 				url: "/validate/",
+	 				dataType: 'json',
+	 				timeout: 4000,
+	 				data: {submission: JSON.stringify(payload), repo: repo},
 
- 			)
+	 				// check the status of the repo
+	 				success: function(data) {
+	 					if (data.success == true) {
+	 						getStatus()
+	 					} else {
+	 						invalidMessage(data.msg)
+	 					}
+	 				},
+
+	 				beforeSend: function() {
+	 					$('#spinner').fadeIn(300);
+	 				}
+	 			}
+
+	 			)
+
+ 		}
  	}
 
  	function getStatus() {
@@ -437,7 +435,9 @@ $("#submit").click(function( event ) {
 
  	function invalidMessage(msg) {
  		$('#repo-error').text(msg);
- 		$('#norepo-name').text(repo);
+ 		el = $('#norepo-name')
+ 		el.text(repo);
+ 		el.attr('href', 'https://github.com/' + repo)
  		$('#spinner').fadeOut(100);
  		$('#invalid').fadeIn(700)
  		$('html, body').animate({
