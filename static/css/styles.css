@@ -78,7 +78,7 @@ a:hover {
 	display: none;
 }
 
-#failed, #norepo, #building, #timeout {
+#failed, #norepo, #building, #timeout, #invalid, #github {
 	display: none;
 }
 

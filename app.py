@@ -1,13 +1,12 @@
 import os
+import json
 import requests
 import logging
 import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
-
+from github import Github
 from urlparse import urljoin
-
-define("api", default="104.197.142.168", help="IP address for binder API endpoint")
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +18,50 @@ class Building(tornado.web.RequestHandler):
     def get(self, org, repo):
         repo = org + "/" + repo
         self.render('static/status/building.html', repo=repo)
+
+class Validate(tornado.web.RequestHandler):
+    """
+    Handle submissions by checking against repos on GitHub
+    """
+    def post(self):
+
+        # setup a github user
+        github_username = os.environ['GITHUB_USERNAME']
+        github_pass = os.environ['GITHUB_PASS']
+
+        # get the submission and repo
+        self.set_header("Content-Type", "application/json")
+        submission = json.loads(self.get_argument("submission"))
+        repo = self.get_argument("repo")
+        deps = submission['dependencies']
+
+        # get the top-level contents of the repo
+        from github import UnknownObjectException, GithubException
+
+        gituser = Github(github_username, github_pass)
+        
+        try:
+            gitrepo = gituser.get_repo(repo)
+            contents = gitrepo.get_dir_contents('/')
+            names = [str(c.name) for c in contents]
+
+            def missing(filename):
+                if (deps == [filename]) and (filename not in names):
+                    return True
+                else:
+                    return False
+
+            # check for submission errors
+            response = {'success': True, 'msg': ''}
+            for name in ['requirements.txt', 'environment.yml', 'Dockerfile']:
+                if missing(name):
+                    response = {'success': False, 'msg': "There's no %s in your repo" % name}
+
+        except UnknownObjectException, GithubException:
+            response = {'success': False, 'msg': 'Oops, that repo does not exist'}
+
+
+        self.write(response)
 
 class Redirector(tornado.web.RequestHandler):
     """
@@ -33,7 +76,7 @@ class Redirector(tornado.web.RequestHandler):
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
-        endpoint = 'http://' + options.api + ':8080/apps/'
+        endpoint = 'http://api.mybinder.org:8080/apps/'
         
         try:
             r = requests.get(urljoin(endpoint, app_id + '/status'))
@@ -56,7 +99,7 @@ class Redirector(tornado.web.RequestHandler):
                         self.render('static/status/building.html')
                     if status == 'completed':
                         # check for capacity
-                        r = requests.get(url='http://' + options.api + ':8080/capacity')
+                        r = requests.get(url='http://api.mybinder.org:8080/capacity')
                         check = r.json()
                         if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')
@@ -116,6 +159,7 @@ application = tornado.web.Application([
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/status", Building),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
+    (r"/validate/", Validate),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
 
