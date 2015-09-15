@@ -33,7 +33,7 @@
 		<div class='box column-5'>
 			<h2>Tell us your GitHub repo</h2>
 			<form id='form'>
-				<input class='step-one' id='repo' type="text" placeholder='organization/project  OR  user/project'>
+				<input class='step-one' id='repo' type="text" placeholder='user/project OR github url'>
 			</form>
 		</div>
 		<div class='column-3'>
@@ -54,7 +54,11 @@
 			</div>
 			<div class='dependency'>
 				<input type="radio" id="dependency-requirements" name="dependency-radio" value="requirements" class="dependency-checkbox">
-				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for custom Python projects</span>
+				<label for="dependency-requirements"><span><span></span></span></label><label for='dependency-requirements' id='dependency-requirements-checkbox-text' class='checkbox-text'>requirements.txt</label><span class='dependency-checkbox-info'>for pip Python projects</span>
+			</div>
+			<div class='dependency'>
+				<input type="radio" id="dependency-conda" name="dependency-radio" value="conda" class="dependency-checkbox">
+				<label for="dependency-conda"><span><span></span></span></label><label for='dependency-conda' id='dependency-conda-checkbox-text' class='checkbox-text'>environment.yml</label><span class='dependency-checkbox-info'>for conda Python projects</span>
 			</div>
 			<div class='dependency'>
 				<input type="radio" id="dependency-dockerfile" name="dependency-radio" value="dockerfile" class="dependency-checkbox">
@@ -62,7 +66,7 @@
 			</div>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Three modes are supported. If your notebooks only use scientific Python, select none. If they have Python dependencies, select requirements.txt and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
+			<p class='sidebar'>Four modes are supported. If your notebooks only use scientific Python, select none. If they have Python dependencies, select either requirements.txt (for pip) or environment.yml (for conda) and include one in your repo (see <a href='https://github.com/binder-project/example-requirements'>example</a>). If they have more complex dependencies, include a custom Dockerfile that builds off our <a href='https://github.com/binder-project/binder/blob/master/images/base/Dockerfile'>base image</a> (see <a href='https://github.com/binder-project/example-dockerfile'>example</a>).</p>
 		</div>
 	</div>
 
@@ -127,14 +131,14 @@
 			<h2 class='failed'>Oops, that GitHub repo does not exist. Double check the repo name and try again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Make sure you're entering a valid repository.</p>
+			<p class='sidebar'>The name you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's a valid repository.</p>
 		</div>
 	</div>
 
 	<div class='row' id='invalid' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
-			<h2 class='failed'><span id='repo-error'></span>, please double check the repo and try again.</h2>
+			<h2 class='failed'><span id='repo-error'></span>, double check the repo and try again.</h2>
 		</div>
 		<div class='column-3'>
 			<p class='sidebar'>Make sure the contents of your repository match your build specification.</p>
@@ -220,30 +224,23 @@ var el = $('#dependency-none-checkbox-text')
 el.addClass('dependency-toggle')
 
 $("#dependency-requirements").click(function(event) {
-	var el = $('#dependency-requirements-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-none-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-requirements-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#dependency-dockerfile").click(function(event) {
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-requirements-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-none-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-dockerfile-checkbox-text').addClass('dependency-toggle')
+})
+
+$("#dependency-conda").click(function(event) {
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-conda-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#dependency-none").click(function(event) {
-	var el = $('#dependency-none-checkbox-text')
-	el.addClass('dependency-toggle')
-	var el = $('#dependency-requirements-checkbox-text')
-	el.removeClass('dependency-toggle')
-	var el = $('#dependency-dockerfile-checkbox-text')
-	el.removeClass('dependency-toggle')
+	$('.checkbox-text').removeClass('dependency-toggle')
+	$('#dependency-none-checkbox-text').addClass('dependency-toggle')
 })
 
 $("#service-postgres").click(function(event) {
@@ -296,6 +293,9 @@ $("#submit").click(function( event ) {
  	if (dependency == 'requirements') {
  		payload['dependencies'].push("requirements.txt")
  	}
+ 	if (dependency == 'conda') {
+ 		payload['dependencies'].push("environment.yml")
+ 	}
  	if (dependency == 'dockerfile') {
  		payload['dependencies'].push("Dockerfile")
  	}
@@ -311,6 +311,13 @@ $("#submit").click(function( event ) {
 		});
 
  	} else {
+
+ 		// strip http or https
+ 		repo = repo.replace('https://github.com/','')
+ 		repo = repo.replace('http://github.com/','')
+
+ 		// strip .git (if pasted from github)
+ 		repo = repo.replace('.git', '')
 
  		$.ajax(
 
@@ -430,7 +437,8 @@ $("#submit").click(function( event ) {
 
  	function norepoMessage() {
  		$('#spinner').fadeOut(100);
-		$('#norepo').fadeIn(700)
+ 		$('#norepo-name').text(repo);
+		$('#norepo').fadeIn(700);
 		$('html, body').animate({
 	    	scrollTop: $("#norepo").offset().top
 		}, 700);

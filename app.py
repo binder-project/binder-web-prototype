@@ -38,13 +38,13 @@ class Submit(tornado.web.RequestHandler):
         response = {'success': True, 'msg': ''}
         if submission['dependencies'] == ['requirements.txt']:
             if 'requirements.txt' not in names:
-                response = {'success': False, 'msg': 'Could not find an requirements.txt in your repository'}
+                response = {'success': False, 'msg': "Can't find a requirements.txt in your repository"}
         elif submission['dependencies'] == ['environment.yml']:
             if 'environment.yml' not in names:
-                response = {'success': False, 'msg': 'Could not find an environment.yml in your repository'}
+                response = {'success': False, 'msg': "Can't find an environment.yml in your repository"}
         elif submission['dependencies'] == ['Dockerfile']:
             if 'Dockerfile' not in names:
-                response = {'success': False, 'msg': 'Could not find a Dockerfile in your repository'}
+                response = {'success': False, 'msg': "Can't find a Dockerfile in your repository"}
 
         self.write(response)
 
@@ -53,8 +53,14 @@ class Redirector(tornado.web.RequestHandler):
     """
     Redirect calls to the Binder API depending on status
     """
-    def get(self, app_id):
+    def get(self, org, repo, location=None):
 
+        # strip trailing /
+        if repo[-1] == '/':
+            repo = repo[:-1]
+
+        # get locations
+        app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
         endpoint = 'http://' + options.api + ':8080/apps/'
         
@@ -89,7 +95,12 @@ class Redirector(tornado.web.RequestHandler):
                                 redirectblob = r.json()
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']
-                                    self.redirect(url)
+                                    if location is not None and location != '':
+                                        logging.debug('redirecting to: %s' % url + "/notebooks/" + location)
+                                        self.redirect(url + "/notebooks/" + location)
+                                    else:
+                                        logging.debug('redirecting to: %s' % url)
+                                        self.redirect(url)
                                 else:
                                     self.redirect(baseurl + '/status/unknown.html')
                             except Exception as e:
@@ -108,12 +119,7 @@ class Redirector(tornado.web.RequestHandler):
         """
         baseurl = self.request.protocol + "://" + self.request.host
         logging.error(e)
-        if isinstance(e, (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout)):
-            logging.info('sending at capacity message')
-            self.render('static/status/capacity.html')
-        else:
-            logging.info('sending unknown error message')
-            self.redirect(baseurl + '/status/unknown.html')
+        self.redirect(baseurl + '/status/unknown.html')
 
     def error_handler(self, e):
         """
@@ -136,7 +142,8 @@ settings = {
 }
 
 application = tornado.web.Application([
-    (r"/repo/(?P<app_id>.*)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
     (r"/submit/", Submit),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
