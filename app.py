@@ -8,8 +8,6 @@ from tornado.options import define, options
 from github import Github
 from urlparse import urljoin
 
-define("api", default="104.197.142.168", help="IP address for binder API endpoint")
-
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
 
@@ -71,7 +69,7 @@ class Redirector(tornado.web.RequestHandler):
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
-        endpoint = 'http://' + options.api + ':8080/apps/'
+        endpoint = 'http://api.mybinder.org:8080/apps/'
         
         try:
             r = requests.get(urljoin(endpoint, app_id + '/status'))
