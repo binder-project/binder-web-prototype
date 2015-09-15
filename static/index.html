@@ -141,7 +141,7 @@
 			<h2 class='failed'><span id='repo-error'></span>, double check the repo and try again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>Make sure the contents of your repository match your build specification.</p>
+			<p class='sidebar'>The repo you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's correct and that the contents match your build specification.</p>
 		</div>
 	</div>
 
@@ -435,17 +435,9 @@ $("#submit").click(function( event ) {
 		}, 700);
  	}
 
- 	function norepoMessage() {
- 		$('#spinner').fadeOut(100);
- 		$('#norepo-name').text(repo);
-		$('#norepo').fadeIn(700);
-		$('html, body').animate({
-	    	scrollTop: $("#norepo").offset().top
-		}, 700);
- 	}
-
  	function invalidMessage(msg) {
  		$('#repo-error').text(msg);
+ 		$('#norepo-name').text(repo);
  		$('#spinner').fadeOut(100);
  		$('#invalid').fadeIn(700)
  		$('html, body').animate({

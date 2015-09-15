@@ -29,22 +29,30 @@ class Submit(tornado.web.RequestHandler):
         repo = self.get_argument("repo")
 
         # get the top-level contents of the repo
+        from github import UnknownObjectException
+
         gituser = Github(github_username, github_pass)
         gitrepo = gituser.get_repo(repo)
-        contents = gitrepo.get_dir_contents('/')
-        names = [str(c.name) for c in contents]
 
-        # check for submission errors
-        response = {'success': True, 'msg': ''}
-        if submission['dependencies'] == ['requirements.txt']:
-            if 'requirements.txt' not in names:
-                response = {'success': False, 'msg': "Can't find a requirements.txt in your repository"}
-        elif submission['dependencies'] == ['environment.yml']:
-            if 'environment.yml' not in names:
-                response = {'success': False, 'msg': "Can't find an environment.yml in your repository"}
-        elif submission['dependencies'] == ['Dockerfile']:
-            if 'Dockerfile' not in names:
-                response = {'success': False, 'msg': "Can't find a Dockerfile in your repository"}
+        try:
+            contents = gitrepo.get_dir_contents('/')
+            names = [str(c.name) for c in contents]
+
+            def exists(filename):
+                if submission['dependencies'] == [filename] and filename in names:
+                    return True
+                else:
+                    return False
+
+            # check for submission errors
+            response = {'success': True, 'msg': ''}
+            for name in ['requirements.txt', 'environment.yml', 'Dockerfile']:
+                if not exists(name):
+                    response = {'success': False, 'msg': "There's no %s in your repository" % n}
+
+        except UnknownObjectException:
+            response = {'success': False, 'msg': 'Oops, that repo does not exist'}
+
 
         self.write(response)
 
