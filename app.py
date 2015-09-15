@@ -92,7 +92,7 @@ class Redirector(tornado.web.RequestHandler):
                         self.render('static/status/building.html')
                     if status == 'completed':
                         # check for capacity
-                        r = requests.get(url='http://' + options.api + ':8080/capacity')
+                        r = requests.get(url='http://api.mybinder.org:8080/capacity')
                         check = r.json()
                         if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')
