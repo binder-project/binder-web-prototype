@@ -125,13 +125,13 @@
 		</div>
 	</div>
 
-	<div class='row' id='norepo' style='margin-top:50px'>
+	<div class='row' id='invalid' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
-			<h2 class='failed'>Oops, that GitHub repo does not exist. Double check the repo name and try again.</h2>
+			<h2 class='failed'><span id='repo-error'></span>, double check the repo and try again.</h2>
 		</div>
 		<div class='column-3'>
-			<p class='sidebar'>The name you entered was <span id='norepo-name' style="color: rgb(150,150,150)"></span>, make sure that's a valid repository.</p>
+			<p class='sidebar'>The repo you entered was <a id='norepo-name' class='grayed'></a>, make sure that's correct and that the contents match your build specification.</p>
 		</div>
 	</div>
 
@@ -163,14 +163,6 @@
 		<p style='font-size: 20px'>check the system <a class='grayed' href='status'>status</a></p>
 	</div>
 
-	<div id="modal" class="dialog">
-		<div>
-			<a id="close" class="close">X</a>
-			<h2>Cannot build Binder</h2>
-			<p>GitHub repo not specified</p>
-		</div>
-	</div>
-
 </body>
 
 </html>
@@ -195,6 +187,7 @@ function clearMessages() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#invalid').fadeOut(100)
 	$('#building').fadeOut(100)
 	$('#timeout').fadeOut(100)
 }
@@ -316,28 +309,38 @@ $("#submit").click(function( event ) {
  		// strip .git (if pasted from github)
  		repo = repo.replace('.git', '')
 
- 		$.ajax(
+ 		if ((repo.indexOf('/') < 0) | (repo.indexOf(' ') > -1)) {
+ 			
+ 			invalidMessage('Oops, that repo name appears badly formatted')
 
- 			{
- 				method: "GET",
- 				url: "https://api.github.com/repos/" + repo,
+ 		} else {
 
- 				// if the repo exists, proceed to check status
- 				success: function(data) {
- 					getStatus()
- 				},
+	 		$.ajax(
 
- 				// if the repo doesn't exist, throw an error
- 				error: function(err) {
- 					norepoMessage()
- 				},
+	 			{
+	 				method: "POST",
+	 				url: "/validate/",
+	 				dataType: 'json',
+	 				timeout: 4000,
+	 				data: {submission: JSON.stringify(payload), repo: repo},
 
- 				beforeSend: function() {
- 					$('#spinner').fadeIn(300);
- 				}
- 			}
+	 				// check the status of the repo
+	 				success: function(data) {
+	 					if (data.success == true) {
+	 						getStatus()
+	 					} else {
+	 						invalidMessage(data.msg)
+	 					}
+	 				},
 
- 			)
+	 				beforeSend: function() {
+	 					$('#spinner').fadeIn(300);
+	 				}
+	 			}
+
+	 			)
+
+ 		}
  	}
 
  	function getStatus() {
@@ -430,12 +433,15 @@ $("#submit").click(function( event ) {
 		}, 700);
  	}
 
- 	function norepoMessage() {
+ 	function invalidMessage(msg) {
+ 		$('#repo-error').text(msg);
+ 		el = $('#norepo-name')
+ 		el.text(repo);
+ 		el.attr('href', 'https://github.com/' + repo)
  		$('#spinner').fadeOut(100);
- 		$('#norepo-name').text(repo);
-		$('#norepo').fadeIn(700);
-		$('html, body').animate({
-	    	scrollTop: $("#norepo").offset().top
+ 		$('#invalid').fadeIn(700)
+ 		$('html, body').animate({
+	    	scrollTop: $("#invalid").offset().top
 		}, 700);
  	}
 
