@@ -131,6 +131,16 @@
 		</div>
 	</div>
 
+	<div class='row' id='invalid' style='margin-top:50px'>
+		<div class='column-2'></div>
+		<div class='box column-5'>
+			<h2 class='failed'><span id='repo-error'></span>, please double check the repo and try again.</h2>
+		</div>
+		<div class='column-3'>
+			<p class='sidebar'>Make sure the contents of your repository match your build specification.</p>
+		</div>
+	</div>
+
 	<div class='row' id='building' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
@@ -159,14 +169,6 @@
 		<p style='font-size: 20px'>check the system <a class='grayed' href='status'>status</a></p>
 	</div>
 
-	<div id="modal" class="dialog">
-		<div>
-			<a id="close" class="close">X</a>
-			<h2>Cannot build Binder</h2>
-			<p>GitHub repo not specified</p>
-		</div>
-	</div>
-
 </body>
 
 </html>
@@ -191,6 +193,7 @@ function clearMessages() {
 	$('#badge').fadeOut(100)
 	$('#failed').fadeOut(100)
 	$('#norepo').fadeOut(100)
+	$('#invalid').fadeOut(100)
 	$('#building').fadeOut(100)
 	$('#timeout').fadeOut(100)
 }
@@ -312,17 +315,19 @@ $("#submit").click(function( event ) {
  		$.ajax(
 
  			{
- 				method: "GET",
- 				url: "https://api.github.com/repos/" + repo,
+ 				method: "POST",
+ 				url: "/submit/",
+ 				dataType: 'json',
+ 				timeout: 4000,
+ 				data: {submission: JSON.stringify(payload), repo: repo},
 
- 				// if the repo exists, proceed to check status
+ 				// check the status of the repo
  				success: function(data) {
- 					getStatus()
- 				},
-
- 				// if the repo doesn't exist, throw an error
- 				error: function(err) {
- 					norepoMessage()
+ 					if (data.success == true) {
+ 						getStatus()
+ 					} else {
+ 						invalidMessage(data.msg)
+ 					}
  				},
 
  				beforeSend: function() {
@@ -428,6 +433,15 @@ $("#submit").click(function( event ) {
 		$('#norepo').fadeIn(700)
 		$('html, body').animate({
 	    	scrollTop: $("#norepo").offset().top
+		}, 700);
+ 	}
+
+ 	function invalidMessage(msg) {
+ 		$('#repo-error').text(msg);
+ 		$('#spinner').fadeOut(100);
+ 		$('#invalid').fadeIn(700)
+ 		$('html, body').animate({
+	    	scrollTop: $("#invalid").offset().top
 		}, 700);
  	}
 

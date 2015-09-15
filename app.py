@@ -1,16 +1,53 @@
 import os
+import json
 import requests
 import logging
 import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
-
+from github import Github
 from urlparse import urljoin
 
 define("api", default="104.197.142.168", help="IP address for binder API endpoint")
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
+
+class Submit(tornado.web.RequestHandler):
+    """
+    Handle submissions by checking against repos on GitHub
+    """
+    def post(self):
+
+        # setup a github user
+        github_username = os.environ['GITHUB_USERNAME']
+        github_pass = os.environ['GITHUB_PASS']
+
+        # get the submission and repo
+        self.set_header("Content-Type", "application/json")
+        submission = json.loads(self.get_argument("submission"))
+        repo = self.get_argument("repo")
+
+        # get the top-level contents of the repo
+        gituser = Github(github_username, github_pass)
+        gitrepo = gituser.get_repo(repo)
+        contents = gitrepo.get_dir_contents('/')
+        names = [str(c.name) for c in contents]
+
+        # check for submission errors
+        response = {'success': True, 'msg': ''}
+        if submission['dependencies'] == ['requirements.txt']:
+            if 'requirements.txt' not in names:
+                response = {'success': False, 'msg': 'Could not find an requirements.txt in your repository'}
+        elif submission['dependencies'] == ['environment.yml']:
+            if 'environment.yml' not in names:
+                response = {'success': False, 'msg': 'Could not find an environment.yml in your repository'}
+        elif submission['dependencies'] == ['Dockerfile']:
+            if 'Dockerfile' not in names:
+                response = {'success': False, 'msg': 'Could not find a Dockerfile in your repository'}
+
+        self.write(response)
+
 
 class Redirector(tornado.web.RequestHandler):
     """
@@ -100,6 +137,7 @@ settings = {
 
 application = tornado.web.Application([
     (r"/repo/(?P<app_id>.*)", Redirector),
+    (r"/submit/", Submit),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
 
