@@ -63,12 +63,12 @@
 
 		<div class='column-7 suffix-1' style='margin-bottom:50px'>
 			<div id='log-box' class='box log-box' style='margin: 0 auto; height: 350px;'>
-				<div class='row' id='logs-loading' style='display: none; position: absolute; left: 0; right: 0; margin-top: 60px'>
+				<div class='row' id='logs-loading' style='display: none; margin-top: 60px; height: 50px'>
 					<div class="three-quarters-loader" style='color: white'>
 				  		Loading…
 					</div>
 				</div>
-				<div id='logs' class='logs'>
+				<div id='logs' class='logs' style='display: none'>
 					<p class='log-text'> </p>
 				</div>
 				<div id='log-status' style='height: 50px;'>
@@ -161,6 +161,7 @@ function init_status() {
 				});
 				$('#logs-loading').fadeOut(200, function() {
 					console.log(status)
+					$('#logs').fadeIn(200)
 					if (status == "building") {
 						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
@@ -178,6 +179,7 @@ function init_status() {
 				console.log(err)
 				if (err.statusText == "Not Found") {
 					$('#logs-loading').fadeOut(200, function() {
+						$('#logs').fadeIn(200)
 						no_logs()
 					});
 					$('#tracker-loading').fadeOut(200, function() {
@@ -185,6 +187,7 @@ function init_status() {
 					});
 				} else {
 					$('#logs-loading').fadeOut(200, function() {
+						$('#logs').fadeIn(200)
 						no_logs()
 					});
 					$('#tracker-loading').fadeOut(200, function() {
