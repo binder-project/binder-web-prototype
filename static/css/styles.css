@@ -65,13 +65,17 @@ a:hover {
 .box {
 	text-align: left;
 	display: block;
-	width: 45%;
 	background-color: rgb(230,231,232);
 	border-radius: 6px;
-	padding-top: 15px;
-	padding-left: 40px;
-	padding-right: 40px;
-	padding-bottom: 35px;
+	padding-top: 20px;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-bottom: 15px;
+}
+
+.box-message {
+	font-size: 26px;
+	text-align: left;
 }
 
 #badge {
@@ -212,37 +216,44 @@ input[type=text] {
 }
 
 .stage {
-	text-align: center;
+	margin-bottom: 130px;
 }
 
 .stage-name {
+	display: inline; 
+	position: absolute;
+	right: 110px;
+	text-align: right;
 	font-size: 24px;
+	margin-top: 7px;
 }
 
 #progress {
 	position: absolute;
 	display: inline-block;
-	top: 38%;
-	left: 50%;
+	top: 5%;
+	left: 78.5%;
 	border: solid 6px white;
+	width: 0%;
 	transition: all 0.7s;
 }
 
 .progress-init {
-	width: 0%;
+	height: 0%;
 }
 
 .progress-building {
-	width: 100%;
+	height: 30%;
 }
 
 .progress-completed {
-	width: 200%;
+	height: 60%;
 }
 
 .circle {
-	position: relative;
-	display: inline-block;
+	position: absolute;
+	right: 40px;
+	display: inline;
 	border-radius: 50%;
 	width: 40px;
 	height: 40px; 
@@ -283,13 +294,13 @@ input[type=text] {
 	background-color: white;
 	border: solid 8px rgb(230,231,232);
 	border-radius: 6px;
-	padding-top: 35px;
-	padding-bottom: 0px;
+	padding-top: 20px;
+	padding-bottom: 15px;
 }
 
 .logs {
 	margin: 5px;
-	height: 300px;
+	height: 320px;
 }
 
 .logs:focus {

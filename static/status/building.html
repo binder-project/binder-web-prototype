@@ -17,42 +17,43 @@
 <html>
 <body>
 
-	<div class='row' style='margin-top: 50px; margin-bottom: 5px'>
+	<div class='row' style='margin-top: 50px; margin-bottom: 25px'>
 		<a class='simple-link' href='http://mybinder.org'><img class='logo' src="{{ static_url('images/logo.svg') }}"></img></a>
 	</div>
 	<div class='row'>
-		<h1 style='margin-bottom:3px; margin-top:15px'>build status</h1>
-		<h1 id='tracker-repo' style='font-size: 22px; margin-bottom: 20px; margin-top: 0px'>{{ repo }}</h1>
-		<div class='row' id='tracker'>
-			<div id='stages' class='box' style='width: 60%; margin: 0 auto; text-align: center'>
+		<h1 id='tracker-repo' style='font-size: 26px; margin-bottom: 3px; margin-top: 0px'>build status for <a class='grayed' href="https://github.com/{{ repo }}">{{ repo }}</a></h1>
+		<h1 style='font-size: 20px; margin-top: 5px; margin-bottom: 45px; '>click to copy markdown or rst to paste into your README and get badge</h1>
+	</div>
+	<div class='row'>
+		<div class='column-3 prefix-1' id='tracker'>
+			<div id='stages' class='box' style='margin: 0 auto; text-align: center; height: 350px'>
 				<div class='row' id='tracker-loading' style='display: none; margin-top: 60px'>
 					<div class="three-quarters-loader" style='color: white'>
 				  		Loading…
 					</div>
 				</div>
 				<div id='not-found' style='display: none'>
-					<h2>Binder could not be found<br>
-					Double check your address,<br>or return <a class='grayed' href='http://mybinder.org'>home</a> and rebuild your Binder.</h2>
+					<h2 class='box-message'>Binder could not be found.
+					Double check your address, or return <a class='grayed' href='http://mybinder.org'>home</a> and rebuild your Binder.</h2>
 				</div>
 				<div id='connection-error' style='display: none'>
-					<h2>Error connecting to server.<br>
-					Check system <a class='grayed' href='http://mybinder.org/status'>status</a>, and try later.</h2>
+					<h2 class='box-message'>Error connecting to server. Check system <a class='grayed' href='http://mybinder.org/status'>status</a>, and try later.</h2>
 				</div>
 				<div id='build-failed' style='display: none'>
-					<h2>Uh oh, your build failed.<br>
+					<h2 class='box-message'>Uh oh, your build failed.
 					Check the logs, and go <a class='grayed' href='http://mybinder.org'>home</a> to try again.</h2>
 				</div>
 				<div class='row' id='tracker-progress' style='display: none'>
-					<div class='stage column-4'>
+					<div class='stage row' style='margin-top: 10px'>
 						<h1 class='stage-name'>Submitted</h1>
 						<hr id='progress' class='progress-init'>
 						<div id='circle-submitted' class='circle'></div>
 					</div>
-					<div class='stage column-4'>
+					<div class='stage row'>
 						<h1 class='stage-name'>Building</h1>
 						<div id='circle-building' class='circle'></div>
 					</div>
-					<div class='stage column-4'>
+					<div class='stage row'>
 						<h1 class='stage-name'>Deployed</h1>
 						<div id='circle-deployed' class='circle'></div>
 					</div>
@@ -60,9 +61,8 @@
 			</div>
 		</div>
 
-		<h1 style='margin-bottom:24px'>logs</h1>
-		<div class='row' style='margin-bottom:50px'>
-			<div id='log-box' class='box log-box' style='width: 60%; margin: 0 auto'>
+		<div class='column-7 suffix-1' style='margin-bottom:50px'>
+			<div id='log-box' class='box log-box' style='margin: 0 auto; height: 350px;'>
 				<div class='row' id='logs-loading' style='display: none; position: absolute; left: 0; right: 0; margin-top: 60px'>
 					<div class="three-quarters-loader" style='color: white'>
 				  		Loading…
@@ -259,7 +259,7 @@ function set_logs_completed(msg) {
 
 function no_logs() {
 	api.getContentPane().append(
-		$("<p class='log-text'/>").text('No logs to display, check message above')
+		$("<p class='log-text'/>").text('No logs to display, check message on left')
 	);
 	api.reinitialise();
 	set_logs_completed()
