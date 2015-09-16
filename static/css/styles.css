@@ -291,6 +291,7 @@ input[type=text] {
 }
 
 .log-box {
+	position: relative;
 	background-color: white;
 	border: solid 8px rgb(230,231,232);
 	border-radius: 6px;
