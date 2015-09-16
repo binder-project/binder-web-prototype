@@ -72,10 +72,10 @@
 					<p class='log-text'> </p>
 				</div>
 				<div id='log-status' style='height: 50px;'>
-					<div id="logs-completed" style='display: none' style='position: absolute; margin-top: 10px'>
-						<div class='circle-small'></div>
+					<div id="logs-completed" style='display: none; position: absolute;'>
+						<div id='circle-small' class='circle-small'></div>
 					</div>
-					<div class="spinner" id='logs-continuing' style="position: absolute">
+					<div class="spinner" id='logs-continuing' style="position: absolute; display: none">
 					  <div class="bounce1"></div>
 					  <div class="bounce2"></div>
 					  <div class="bounce3"></div>
@@ -92,10 +92,6 @@
 </html>
 
 <script>
-
-$('#logs-continuing').fadeOut(200, function() {
-		$('#logs-completed').fadeIn(100)
-	})
 
 var settings = {
 	stickToBottom: true,
@@ -116,9 +112,9 @@ ws.onopen = function(){
 };
 
 ws.onmessage = function(ev){
-	console.log('got message from websocket')
+	//console.log('got message from websocket')
 	var msg = ev.data.split(':')[4]
-	console.log(msg)
+	//console.log(msg)
  	update_log(msg)
 };
 
@@ -168,9 +164,9 @@ function init_status() {
 					if (status == "building") {
 						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
-						$('#logs-completed').fadeIn(100)
+						set_logs_completed('failed')
 					} else if (status == "completed") {
-						$('#logs-completed').fadeIn(100)
+						set_logs_completed('success')
 					} else {
 						no_logs()
 					}
@@ -225,6 +221,7 @@ function update_status() {
 					set_building()
 				} else if (data.build_status == "completed") {
 					set_completed()
+					set_logs_completed('success')
 				}
 			}
 		}
@@ -244,9 +241,20 @@ function set_completed() {
 	$('#progress').removeClass('progress-building')
 	$('#progress').addClass('progress-completed')
 	completed = true 
-	// $('#logs-continuing').fadeOut(100, function() {
-	// 	$('#logs-completed').fadeIn(100)
-	// })
+}
+
+function set_logs_completed(msg) {
+	$('#logs-continuing').fadeOut(50, function() {
+		$('#logs-completed').fadeIn(50)
+		if (msg == 'success') {
+			$('#circle-small').addClass('circle-small-success')
+		} else if (msg == 'failure') {
+			$('#circle-small').addClass('circle-small-failure')
+		} else {
+			$('#circle-small').addClass('circle-small-unknown')
+		}
+		
+	})
 }
 
 function no_logs() {
@@ -254,6 +262,7 @@ function no_logs() {
 		$("<p class='log-text'/>").text('No logs to display, check message above')
 	);
 	api.reinitialise();
+	set_logs_completed()
 }
 
 

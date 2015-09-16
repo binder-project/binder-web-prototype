@@ -253,8 +253,8 @@ input[type=text] {
 }
 
 .circle-small {
-	position: relative;
 	display: inline-block;
+	margin-left: 5px;
 	border-radius: 50%;
 	width: 10px;
 	height: 10px; 
@@ -267,8 +267,12 @@ input[type=text] {
 	background-color: rgb(42, 197, 119);
 }
 
-.circle-small-success {
-	background-color: rgb(42, 197, 119);
+.circle-small-failure {
+	background-color: rgb(197, 42, 119);
+}
+
+.circle-small-unknown {
+	background-color: rgb(234, 209, 117);
 }
 
 .circle-success {
