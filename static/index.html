@@ -364,7 +364,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "GET",
- 				url: "http://api.mybinder.org:8080/apps/" + repo + "/status",
+ 				url: "http://104.197.23.111:8080/apps/" + repo + "/status",
  				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
@@ -398,7 +398,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "POST",
- 				url: "http://api.mybinder.org:8080/apps/" + repo,
+ 				url: "http://104.197.23.111:8080/apps/" + repo,
  				dataType: 'json',
  				timeout: 4000,
  				data: JSON.stringify(payload),

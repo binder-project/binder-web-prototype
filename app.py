@@ -76,7 +76,7 @@ class Redirector(tornado.web.RequestHandler):
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
-        endpoint = 'http://api.mybinder.org:8080/apps/'
+        endpoint = 'http://104.197.23.111:8080/apps/'
         
         try:
             r = requests.get(urljoin(endpoint, app_id + '/status'))
@@ -99,7 +99,7 @@ class Redirector(tornado.web.RequestHandler):
                         self.render('static/status/building.html')
                     if status == 'completed':
                         # check for capacity
-                        r = requests.get(url='http://api.mybinder.org:8080/capacity')
+                        r = requests.get(url='http://104.197.23.111:8080/capacity')
                         check = r.json()
                         if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')

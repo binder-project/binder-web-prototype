@@ -71,10 +71,15 @@
 				<div id='logs' class='logs'>
 					<p class='log-text'> </p>
 				</div>
-				<div class="spinner" id='logs-continuing' style='opacity: 0.0'>
-				  <div class="bounce1"></div>
-				  <div class="bounce2"></div>
-				  <div class="bounce3"></div>
+				<div id='log-status' style='height: 50px;'>
+					<div id="logs-completed" style='display: none' style='position: absolute; margin-top: 10px'>
+						<div class='circle-small'></div>
+					</div>
+					<div class="spinner" id='logs-continuing' style="position: absolute">
+					  <div class="bounce1"></div>
+					  <div class="bounce2"></div>
+					  <div class="bounce3"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -88,6 +93,9 @@
 
 <script>
 
+$('#logs-continuing').fadeOut(200, function() {
+		$('#logs-completed').fadeIn(100)
+	})
 
 var settings = {
 	stickToBottom: true,
@@ -109,7 +117,9 @@ ws.onopen = function(){
 
 ws.onmessage = function(ev){
 	console.log('got message from websocket')
- 	update_log(ev.data.slice(24))
+	var msg = ev.data.split(':')[4]
+	console.log(msg)
+ 	update_log(msg)
 };
 
 ws.onclose = function(ev){
@@ -149,21 +159,21 @@ function init_status() {
 					} else if (status == "completed") {
 						$('#tracker-progress').fadeIn(200);
 						set_completed()
-					} else if (status == "failed") {
-						$('#build-failed').fadeIn(200);
 					} else {
 						$('#build-failed').fadeIn(200);
 					}
 				});
 				$('#logs-loading').fadeOut(200, function() {
-					if (status == "completed") {
-						$('#logs-continuing').css('opacity', '1.0')
+					console.log(status)
+					if (status == "building") {
+						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
-						$('#logs-continuing').css('opacity', '1.0')
+						$('#logs-completed').fadeIn(100)
+					} else if (status == "completed") {
+						$('#logs-completed').fadeIn(100)
 					} else {
 						no_logs()
 					}
-					
 				})
 			},
 
@@ -234,6 +244,9 @@ function set_completed() {
 	$('#progress').removeClass('progress-building')
 	$('#progress').addClass('progress-completed')
 	completed = true 
+	// $('#logs-continuing').fadeOut(100, function() {
+	// 	$('#logs-completed').fadeIn(100)
+	// })
 }
 
 function no_logs() {
@@ -242,5 +255,6 @@ function no_logs() {
 	);
 	api.reinitialise();
 }
+
 
 </script>

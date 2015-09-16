@@ -252,6 +252,25 @@ input[type=text] {
 	transition: all 1.0s;
 }
 
+.circle-small {
+	position: relative;
+	display: inline-block;
+	border-radius: 50%;
+	width: 10px;
+	height: 10px; 
+	background-color: rgb(220,221,222);
+	z-index: 1000;
+	transition: all 1.0s;
+}
+
+.circle-small-success {
+	background-color: rgb(42, 197, 119);
+}
+
+.circle-small-success {
+	background-color: rgb(42, 197, 119);
+}
+
 .circle-success {
 	border: solid 7px rgb(42, 197, 119);
 }
@@ -261,7 +280,7 @@ input[type=text] {
 	border: solid 8px rgb(230,231,232);
 	border-radius: 6px;
 	padding-top: 35px;
-	padding-bottom: 25px;
+	padding-bottom: 0px;
 }
 
 .logs {
@@ -555,7 +574,6 @@ h3 {
 /* custom spinner */
 
 .spinner {
-  margin-top: 20px;
   width: 70px;
   text-align: center;
 }
@@ -564,7 +582,7 @@ h3 {
   width: 14px;
   height: 14px;
   margin-right: 6px;
-  background-color: rgb(230,231,232);
+  background-color: rgb(220,221,222);
 
   border-radius: 100%;
   display: inline-block;
