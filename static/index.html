@@ -180,6 +180,8 @@
 
 <script>
 
+var baseurl = "dev.api.mybinder.org"
+
 $('#repo').focus(onInputFocus);
 $('#repo').blur(onInputBlur);
 
@@ -364,7 +366,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "GET",
- 				url: "http://104.197.23.111:8080/apps/" + repo + "/status",
+ 				url: "http://" + baseurl + ":8080/apps/" + repo + "/status",
  				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
@@ -398,7 +400,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "POST",
- 				url: "http://104.197.23.111:8080/apps/" + repo,
+ 				url: "http://" + baseurl + ":8080/apps/" + repo,
  				dataType: 'json',
  				timeout: 4000,
  				data: JSON.stringify(payload),
@@ -406,7 +408,8 @@ $("#submit").click(function( event ) {
  				// if the post was successful, show the badge
  				success: function(data) {
  					console.log('success')
- 					badgeMessage()
+ 					console.log(repo + '/status')
+ 					window.location = 'repo/' + repo + '/status'
  				},
 
  				// otherwise, throw an error
