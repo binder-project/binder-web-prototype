@@ -12,21 +12,21 @@
 <script type="text/javascript" src="{{ static_url('js/jquery.jscrollpane.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/jquery.mousewheel.js') }}"></script>
 <link type="text/css" href="{{ static_url('css/jquery.jscrollpane.css') }}" rel="stylesheet" media="all" />
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link rel="icon" sizes="16x16 32x32" href="{{ static_url('favicon.ico')}}?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <html>
 <body>
 
-	<div class='row' style='margin-top: 50px; margin-bottom: 25px'>
+	<div class='row' style='margin-top: 50px; margin-bottom: 25px; height: 110px'>
 		<a class='simple-link' href='http://mybinder.org'><img class='logo' src="{{ static_url('images/logo.svg') }}"></img></a>
 	</div>
 	<div class='row'>
-		<h1 id='tracker-repo' style='font-size: 26px; margin-bottom: 3px; margin-top: 0px'>build status for <a class='grayed' href="https://github.com/{{ repo }}">{{ repo }}</a></h1>
-		<h1 style='font-size: 20px; margin-top: 5px; margin-bottom: 45px; '>click to copy markdown or rst to paste into your README and get badge</h1>
+		<h1 id='tracker-repo' style='font-size: 26px; margin-bottom: 40px; margin-top: 0px'>build status for <a class='grayed' href="https://github.com/{{ repo }}">{{ repo }}</a></h1>
 	</div>
 	<div class='row'>
-		<div class='column-3 prefix-1' id='tracker'>
-			<div id='stages' class='box' style='margin: 0 auto; text-align: center; height: 350px'>
+		<div class='column-3' id='tracker'>
+			<div id='stages' class='box-vertical' style='margin: 0 auto; text-align: center; height: 350px'>
 				<div class='row' id='tracker-loading' style='display: none; margin-top: 60px'>
 					<div class="three-quarters-loader" style='color: white'>
 				  		Loading…
@@ -39,10 +39,6 @@
 				<div id='connection-error' style='display: none'>
 					<h2 class='box-message'>Error connecting to server. Check system <a class='grayed' href='http://mybinder.org/status'>status</a>, and try later.</h2>
 				</div>
-				<div id='build-failed' style='display: none'>
-					<h2 class='box-message'>Uh oh, your build failed.
-					Check the logs, and go <a class='grayed' href='http://mybinder.org'>home</a> to try again.</h2>
-				</div>
 				<div class='row' id='tracker-progress' style='display: none'>
 					<div class='stage row' style='margin-top: 10px'>
 						<h1 class='stage-name'>Submitted</h1>
@@ -54,21 +50,21 @@
 						<div id='circle-building' class='circle'></div>
 					</div>
 					<div class='stage row'>
-						<h1 class='stage-name'>Deployed</h1>
+						<h1 id='deployed' class='stage-name'>Deployed</h1>
 						<div id='circle-deployed' class='circle'></div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class='column-7 suffix-1' style='margin-bottom:50px'>
+		<div class='column-7' style='margin-bottom:25px'>
 			<div id='log-box' class='box log-box' style='margin: 0 auto; height: 350px;'>
-				<div class='row' id='logs-loading' style='display: none; margin-top: 60px; height: 50px'>
+				<div class='row' id='logs-loading' style='display: none; margin-top: 60px; left: 0; right: 0; position: absolute'>
 					<div class="three-quarters-loader" style='color: white'>
 				  		Loading…
 					</div>
 				</div>
-				<div id='logs' class='logs' style='display: none'>
+				<div id='logs' class='logs' style='opacity:0.0'>
 					<p class='log-text'> </p>
 				</div>
 				<div id='log-status' style='height: 50px;'>
@@ -83,7 +79,15 @@
 				</div>
 			</div>
 		</div>
+
+		<div class='column-2'>
+			<div class='box-vertical' style='padding-left:20px; padding-right:20px;padding-top: 20px; padding-bottom: 15px;height: 350px;border: solid 8px rgb(230,231,232);'>
+				<h1 style='text-align: left; font-size: 16px; margin-top: 0px; margin-bottom: 30px; '>click to copy<br><br><a id='markdown-copy' class='copy'>markdown</a><a id='rst-copy' class='copy'>rst</a><br><br>then paste into your README to get<br><br><a href="http://mybinder.org/repo/{{ repo }}" class='simple-link' id='badge-link-logo'><img class='badge-logo' width='130px' style='margin-left:0px' src="{{ static_url('badge.svg') }}"></img></a></h1>
+			</div>
+		</div>
 	</div>
+
+
 
 	
 
@@ -102,19 +106,20 @@ pane.jScrollPane(settings);
 var api = pane.data('jsp');
 var i = 1;
 
-
 var repo = "{{ repo }}"
-var endpoint = "http://104.197.23.111:8080/apps/" + repo + "/status"
-var ws = new WebSocket("ws://104.197.23.111:8080/apps/" + repo + "/logs")
+var baseurl = "{{ host }}"
+var endpoint = "http://" + baseurl + ":8080/apps/" + repo + "/status"
+
+
+// setup websockets
+var ws = new WebSocket("ws://" + baseurl + ":8080/apps/" + repo + "/logs")
 
 ws.onopen = function(){
  	console.log('ws connection opened')
 };
 
 ws.onmessage = function(ev){
-	//console.log('got message from websocket')
-	var msg = ev.data.split(':')[4]
-	//console.log(msg)
+	var msg = ev.data.split(':').slice(4)
  	update_log(msg)
 };
 
@@ -122,18 +127,21 @@ ws.onclose = function(ev){
 	console.log('closing')
 };
 
+ws.onerror = function(ev){
+	api.getContentPane().append(
+		$("<p class='log-text'/>").fadeIn(200).text('Could not retrieve logs')
+	);
+	api.reinitialise();
+}
+
 var status
-var completed = false
 init_status()
 
 setInterval( function() 
 	{ 
-		console.log('updating status')
-		if (completed == false) {
-			update_status()
-		}
+		update_status()
 	}, 
-	2000
+	500
 );
 
 function init_status() {
@@ -156,12 +164,16 @@ function init_status() {
 						$('#tracker-progress').fadeIn(200);
 						set_completed()
 					} else {
-						$('#build-failed').fadeIn(200);
+						set_failed()
+						$('#tracker-progress').fadeIn(200);
 					}
 				});
 				$('#logs-loading').fadeOut(200, function() {
-					console.log(status)
-					$('#logs').fadeIn(200)
+					api.getContentPane().append(
+						$("<p class='log-text'/>").fadeIn(200).text('Starting logs...')
+					);
+					api.reinitialise();
+					$('#logs').css('opacity', '1.0')
 					if (status == "building") {
 						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
@@ -225,6 +237,9 @@ function update_status() {
 				} else if (data.build_status == "completed") {
 					set_completed()
 					set_logs_completed('success')
+				} else if (data.build_status == "failed") {
+					set_failed()
+					set_logs_completed('failed')
 				}
 			}
 		}
@@ -234,7 +249,18 @@ function update_status() {
 function set_building() {
 	$('#circle-submitted').addClass('circle-success')
 	$('#circle-building').addClass('circle-success')
+	$('#circle-deployed').removeClass('circle-success')
+	$('#circle-deployed').removeClass('circle-failure')
+	$('#progress').removeClass('progress-completed')
 	$('#progress').addClass('progress-building')
+	$('#logs-completed').fadeOut(50, function() {
+		$('#logs-continuing').fadeIn(50)
+	})
+	if ($('#deployed').text() == 'Failed!') {
+		$("#deployed").fadeOut(function() {
+		  $(this).text("Deployed").fadeIn();
+		});
+	}
 }
 
 function set_completed() {
@@ -243,7 +269,26 @@ function set_completed() {
 	$('#circle-deployed').addClass('circle-success')
 	$('#progress').removeClass('progress-building')
 	$('#progress').addClass('progress-completed')
-	completed = true 
+	$('#circle-small').addClass('circle-small-success')
+	$('#circle-small').removeClass('circle-small-failure')
+	$('#circle-small').removeClass('circle-small-unknown')
+	$('#circle-small').addClass('circle-small-success')
+}
+
+function set_failed() {
+	$('#circle-submitted').addClass('circle-success')
+	$('#circle-building').addClass('circle-success')
+	$('#circle-deployed').addClass('circle-failure')
+	$('#progress').removeClass('progress-building')
+	$('#progress').addClass('progress-completed')
+	if ($('#deployed').text() == 'Deployed') {
+		$("#deployed").fadeOut(50, function() {
+		  $(this).text("Failed!").fadeIn(50);
+		});
+	}
+	$('#circle-small').removeClass('circle-small-success')
+	$('#circle-small').removeClass('circle-small-unknown')
+	$('#circle-small').addClass('circle-small-failure')
 }
 
 function set_logs_completed(msg) {
@@ -251,7 +296,7 @@ function set_logs_completed(msg) {
 		$('#logs-completed').fadeIn(50)
 		if (msg == 'success') {
 			$('#circle-small').addClass('circle-small-success')
-		} else if (msg == 'failure') {
+		} else if (msg == 'failed') {
 			$('#circle-small').addClass('circle-small-failure')
 		} else {
 			$('#circle-small').addClass('circle-small-unknown')
@@ -262,11 +307,12 @@ function set_logs_completed(msg) {
 
 function no_logs() {
 	api.getContentPane().append(
-		$("<p class='log-text'/>").text('No logs to display, check message on left')
+		$("<p class='log-text'/>").fadeIn(200).text('No logs to display, check message on left')
 	);
 	api.reinitialise();
 	set_logs_completed()
 }
+
 
 
 </script>

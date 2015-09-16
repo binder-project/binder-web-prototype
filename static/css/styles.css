@@ -14,6 +14,7 @@
     src: url(../fonts/clearsans-1.00/WOFF/ClearSans-Medium.woff);
 }
 
+
 body {
 	color: rgb(40, 40, 40);
 }
@@ -67,10 +68,22 @@ a:hover {
 	display: block;
 	background-color: rgb(230,231,232);
 	border-radius: 6px;
+	padding-top: 15px;
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-bottom: 35px;
+}
+
+.box-vertical {
+	text-align: left;
+	display: block;
+	background-color: rgb(230,231,232);
+	border-radius: 6px;
 	padding-top: 20px;
 	padding-left: 30px;
 	padding-right: 30px;
 	padding-bottom: 15px;
+
 }
 
 .box-message {
@@ -225,14 +238,14 @@ input[type=text] {
 	right: 110px;
 	text-align: right;
 	font-size: 24px;
-	margin-top: 7px;
+	margin-top: 10px;
 }
 
 #progress {
 	position: absolute;
 	display: inline-block;
 	top: 5%;
-	left: 78.5%;
+	left: 71%;
 	border: solid 6px white;
 	width: 0%;
 	transition: all 0.7s;
@@ -279,7 +292,7 @@ input[type=text] {
 }
 
 .circle-small-failure {
-	background-color: rgb(197, 42, 119);
+	background-color: rgb(213, 32, 68);
 }
 
 .circle-small-unknown {
@@ -288,6 +301,10 @@ input[type=text] {
 
 .circle-success {
 	border: solid 7px rgb(42, 197, 119);
+}
+
+.circle-failure {
+	border: solid 7px rgb(213, 32, 68);
 }
 
 .log-box {
@@ -309,9 +326,9 @@ input[type=text] {
 }
 
 .log-text {
-	margin-bottom: 7px;
+	margin-bottom: 10px;
 	margin-top: 0px;
-	font-family: Consolas;
+	font-family: 'Inconsolata', monospace;
 	color: rgb(120,120,120);
 	font-size: 14px;
 }
@@ -564,6 +581,40 @@ h3 {
 	transition: all 0.25s;
 }
 
+
+/* buttons for zero clipboard */
+
+.copy {
+	color: rgb(200,200,200);
+    max-width: 120px;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    background-color: white;
+    margin: 2px;
+    padding: 6px;
+    transition: all 0.1s;
+    outline: none;
+    font-size: 16px;
+    font-family: ClearSans-Thin;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+ 
+ .copy:hover { 
+ 	color: rgb(150,150,150);
+ 	background-color: rgb(220,220,220); 
+ 	cursor: pointer;
+ }
+
+.copy:focus {
+	background-color: white;
+}
+
+ .copy:active { 
+ 	background-color: rgb(200,200,200); 
+ 	cursor: pointer;
+ }
 
 /* jquery-based custom scroll box */
 
