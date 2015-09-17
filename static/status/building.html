@@ -64,7 +64,7 @@
 					</div>
 				</div>
 				<div id='logs' class='logs' style='opacity:0.0'>
-					<p class='log-text'> </p>
+					<p class='log-text'>Getting logs...</p>
 				</div>
 				<div id='log-status' style='height: 50px;'>
 					<div id="logs-completed" style='display: none; position: absolute;'>
@@ -170,10 +170,6 @@ function init_status() {
 				$('#logs-loading').fadeOut(200, function() {
 					$('#logs').css('opacity', '1.0')
 					if (status == "building") {
-						api.getContentPane().append(
-							$("<p class='log-text'/>").fadeIn(200).text('Starting logs...')
-						);
-						api.reinitialise();
 						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
 						set_logs_completed('failed')
