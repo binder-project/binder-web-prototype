@@ -107,11 +107,11 @@ var i = 1;
 
 var repo = "{{ repo }}"
 var baseurl = "{{ host }}"
-var endpoint = "http://" + baseurl + ":8080/apps/" + repo + "/status"
+var endpoint = "http://" + baseurl + "/apps/" + repo + "/status"
 
 
 // setup websockets
-var ws = new WebSocket("ws://" + baseurl + ":8080/apps/" + repo + "/logs")
+var ws = new WebSocket("ws://" + baseurl + "/apps/" + repo + "/logs")
 
 ws.onopen = function(){
  	console.log('ws connection opened')
