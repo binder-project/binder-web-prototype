@@ -78,10 +78,10 @@ class Redirector(tornado.web.RequestHandler):
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
-        endpoint = 'http://' + options.api
+        endpoint = 'http://' + options.host
         
         try:
-            r = requests.get(urljoin(endpoint + ':8080/apps/', app_id + '/status'))
+            r = requests.get(urljoin(endpoint + '/apps/', app_id + '/status'))
 
             if r.status_code == 404:
                 logging.info('cannot get status')
@@ -101,13 +101,13 @@ class Redirector(tornado.web.RequestHandler):
                         self.render('static/status/building.html')
                     if status == 'completed':
                         # check for capacity
-                        r = requests.get(url=endpoint + ':8080/capacity/')
+                        r = requests.get(url=endpoint + '/capacity/')
                         check = r.json()
                         if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')
                         else:
                             try:
-                                r = requests.get(url=urljoin(endpoint + ':8080/apps/', app_id), timeout=(10.0, 10.0))
+                                r = requests.get(url=urljoin(endpoint + '/apps/', app_id), timeout=(10.0, 10.0))
                                 redirectblob = r.json()
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']

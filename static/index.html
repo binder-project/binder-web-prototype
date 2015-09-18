@@ -366,7 +366,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "GET",
- 				url: "http://" + baseurl + ":8080/apps/" + repo + "/status",
+ 				url: "http://" + baseurl + "/apps/" + repo + "/status",
  				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
@@ -400,7 +400,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "POST",
- 				url: "http://" + baseurl + ":8080/apps/" + repo,
+ 				url: "http://" + baseurl + "/apps/" + repo,
  				dataType: 'json',
  				timeout: 4000,
  				data: JSON.stringify(payload),
