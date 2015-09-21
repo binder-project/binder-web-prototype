@@ -322,6 +322,11 @@ $("#submit").click(function( event ) {
  		// strip .git (if pasted from github)
  		repo = repo.replace('.git', '')
 
+ 		// strip training slash
+ 		if (repo.endsWith('/')) {
+ 			repo = repo.slice(0, repo.length - 1)
+ 		}
+
  		if ((repo.indexOf('/') < 0) | (repo.indexOf(' ') > -1)) {
  			
  			invalidMessage('Oops, that repo name seems badly formatted')
