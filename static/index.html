@@ -323,7 +323,7 @@ $("#submit").click(function( event ) {
  		repo = repo.replace('.git', '')
 
  		// strip training slash
- 		if (repo.endsWith('/')) {
+ 		if (repo.slice(repo.length - 1) == '/') {
  			repo = repo.slice(0, repo.length - 1)
  		}
 
