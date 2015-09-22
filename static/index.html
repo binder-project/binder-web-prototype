@@ -138,7 +138,7 @@
 	<div class='row' id='building' style='margin-top:50px'>
 		<div class='column-2'></div>
 		<div class='box column-5'>
-			<h2 class='failed'>Your Binder is still being built, you can check in on it <a class='grayed' id='building-link' href=''>here</a>.</h2>
+			<h2 class='failed'>Your Binder is still being built, check the status <a class='grayed' id='building-link' href=''>here</a>.</h2>
 		</div>
 		<div class='column-3'>
 			<p class='sidebar'>As soon as this Binder is finished building you can submit your repo again. You might want to do so if your repo has been updated.</p>
@@ -180,8 +180,20 @@
 
 <script>
 
+var baseurl = "api.mybinder.org"
+
 $('#repo').focus(onInputFocus);
 $('#repo').blur(onInputBlur);
+
+if ($('#repo').val() != "") {
+	$('#repo').addClass('repo-filled')
+}
+
+window.onpageshow = function(event) {
+    if (event.persisted) {
+       clearMessages()
+    }
+};
 
 function onInputFocus(ev) {
 	$(ev.target).addClass('repo-filled')
@@ -194,20 +206,21 @@ function onInputBlur(ev) {
 }
 
 function clearMessages() {
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#invalid').fadeOut(100)
-	$('#building').fadeOut(100)
-	$('#timeout').fadeOut(100)
-	$('#github').fadeOut(100)
+	$('#badge').hide()
+	$('#failed').hide()
+	$('#norepo').hide()
+	$('#invalid').hide()
+	$('#building').hide()
+	$('#timeout').hide()
+	$('#github').hide()
+	$('#spinner').hide()
 }
 
 $('#repo').click(function() {
 	clearMessages()
 })
 
-$('#repo').select(function() {
+$('#repo').focus(function() {
 	clearMessages()
 })
 
@@ -260,7 +273,7 @@ $("#service-spark").click(function(event) {
 
 
 $("#form").submit(function( event ) {
-  event.preventDefault();
+ 	event.preventDefault();
 });
 
 $("#submit").click(function( event ) {
@@ -313,12 +326,19 @@ $("#submit").click(function( event ) {
 
  	} else {
 
+ 		console.log(repo)
+
  		// strip http or https
  		repo = repo.replace('https://github.com/','')
  		repo = repo.replace('http://github.com/','')
 
  		// strip .git (if pasted from github)
  		repo = repo.replace('.git', '')
+
+ 		// strip training slash
+ 		if (repo.slice(repo.length - 1) == '/') {
+ 			repo = repo.slice(0, repo.length - 1)
+ 		}
 
  		if ((repo.indexOf('/') < 0) | (repo.indexOf(' ') > -1)) {
  			
@@ -353,7 +373,7 @@ $("#submit").click(function( event ) {
 	 				}
 	 			}
 
-	 			)
+	 		)
 
  		}
  	}
@@ -364,7 +384,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "GET",
- 				url: "http://api.mybinder.org/apps/" + repo + "/status",
+ 				url: "http://" + baseurl + "/apps/" + repo + "/status",
  				timeout: 4000,
 
  				// if we retrieved the status, make sure it's not building
@@ -389,7 +409,7 @@ $("#submit").click(function( event ) {
 
  			}
 
- 			)
+ 		)
 
  	}
 
@@ -398,7 +418,7 @@ $("#submit").click(function( event ) {
 
  			{
  				method: "POST",
- 				url: "http://api.mybinder.org/apps/" + repo,
+ 				url: "http://" + baseurl + "/apps/" + repo,
  				dataType: 'json',
  				timeout: 4000,
  				data: JSON.stringify(payload),
@@ -406,7 +426,8 @@ $("#submit").click(function( event ) {
  				// if the post was successful, show the badge
  				success: function(data) {
  					console.log('success')
- 					badgeMessage()
+ 					console.log(repo + '/status')
+ 					window.location = 'repo/' + repo + '/status'
  				},
 
  				// otherwise, throw an error
@@ -442,14 +463,14 @@ $("#submit").click(function( event ) {
  	function buildingMessage() {
  		$('#spinner').fadeOut(100);
 		$('#building').fadeIn(700)
-		$('#building-link').attr("href", "http://mybinder.org/repo/" + repo)
+		$('#building-link').attr("href", "http://mybinder.org/repo/" + repo + "/status")
 		$('html, body').animate({
 	    	scrollTop: $("#building").offset().top
 		}, 700);
  	}
 
  	function invalidMessage(msg) {
- 		$('#repo-error').text(msg);
+ 		$('#repo-error').html(msg);
  		el = $('#norepo-name')
  		el.text(repo);
  		el.attr('href', 'https://github.com/' + repo)

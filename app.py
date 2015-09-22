@@ -10,6 +10,16 @@ from urlparse import urljoin
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
+define("host", default="api.mybinder.org", help="IP address for binder API endpoint")
+
+
+class Building(tornado.web.RequestHandler):
+    """
+    Show building status for an app
+    """
+    def get(self, org, repo):
+        repo = org + "/" + repo
+        self.render('static/status/building.html', repo=repo, host=options.host)
 
 class Validate(tornado.web.RequestHandler):
     """
@@ -47,14 +57,13 @@ class Validate(tornado.web.RequestHandler):
             response = {'success': True, 'msg': ''}
             for name in ['requirements.txt', 'environment.yml', 'Dockerfile']:
                 if missing(name):
-                    response = {'success': False, 'msg': "There's no %s in your repo" % name}
+                    response = {'success': False, 'msg': "There's no <b>%s</b> in your repo" % name}
 
         except UnknownObjectException, GithubException:
             response = {'success': False, 'msg': 'Oops, that repo does not exist'}
 
 
         self.write(response)
-
 
 class Redirector(tornado.web.RequestHandler):
     """
@@ -69,10 +78,10 @@ class Redirector(tornado.web.RequestHandler):
         # get locations
         app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
-        endpoint = 'http://api.mybinder.org/apps/'
+        endpoint = 'http://' + options.host
         
         try:
-            r = requests.get(urljoin(endpoint, app_id + '/status'))
+            r = requests.get(urljoin(endpoint + '/apps/', app_id + '/status'))
 
             if r.status_code == 404:
                 logging.info('cannot get status')
@@ -92,13 +101,13 @@ class Redirector(tornado.web.RequestHandler):
                         self.render('static/status/building.html')
                     if status == 'completed':
                         # check for capacity
-                        r = requests.get(url='http://api.mybinder.org/capacity')
+                        r = requests.get(url=endpoint + '/capacity')
                         check = r.json()
                         if check['running'] > 0.8 * check['capacity']:
                             self.render('static/status/capacity.html')
                         else:
                             try:
-                                r = requests.get(url=urljoin(endpoint, app_id), timeout=(10.0, 10.0))
+                                r = requests.get(url=urljoin(endpoint + '/apps/', app_id), timeout=(10.0, 10.0))
                                 redirectblob = r.json()
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']
@@ -149,6 +158,7 @@ settings = {
 }
 
 application = tornado.web.Application([
+    (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/status", Building),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
     (r"/validate/", Validate),
