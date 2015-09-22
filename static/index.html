@@ -185,6 +185,16 @@ var baseurl = "api.mybinder.org"
 $('#repo').focus(onInputFocus);
 $('#repo').blur(onInputBlur);
 
+if ($('#repo').val() != "") {
+	$('#repo').addClass('repo-filled')
+}
+
+window.onpageshow = function(event) {
+    if (event.persisted) {
+       clearMessages()
+    }
+};
+
 function onInputFocus(ev) {
 	$(ev.target).addClass('repo-filled')
 }
@@ -196,20 +206,21 @@ function onInputBlur(ev) {
 }
 
 function clearMessages() {
-	$('#badge').fadeOut(100)
-	$('#failed').fadeOut(100)
-	$('#norepo').fadeOut(100)
-	$('#invalid').fadeOut(100)
-	$('#building').fadeOut(100)
-	$('#timeout').fadeOut(100)
-	$('#github').fadeOut(100)
+	$('#badge').hide()
+	$('#failed').hide()
+	$('#norepo').hide()
+	$('#invalid').hide()
+	$('#building').hide()
+	$('#timeout').hide()
+	$('#github').hide()
+	$('#spinner').hide()
 }
 
 $('#repo').click(function() {
 	clearMessages()
 })
 
-$('#repo').select(function() {
+$('#repo').focus(function() {
 	clearMessages()
 })
 
@@ -262,7 +273,7 @@ $("#service-spark").click(function(event) {
 
 
 $("#form").submit(function( event ) {
-  event.preventDefault();
+ 	event.preventDefault();
 });
 
 $("#submit").click(function( event ) {
@@ -314,6 +325,8 @@ $("#submit").click(function( event ) {
 		});
 
  	} else {
+
+ 		console.log(repo)
 
  		// strip http or https
  		repo = repo.replace('https://github.com/','')
