@@ -13,6 +13,7 @@
 <script type="text/javascript" src="{{ static_url('js/jquery.mousewheel.js') }}"></script>
 <link type="text/css" href="{{ static_url('css/jquery.jscrollpane.css') }}" rel="stylesheet" media="all" />
 <link rel="icon" sizes="16x16 32x32" href="{{ static_url('favicon.ico')}}?v=2">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <html>
 <body>
@@ -70,7 +71,7 @@
 					<div id="logs-completed" style='display: none; position: absolute;'>
 						<div id='circle-small' class='circle-small'></div>
 					</div>
-					<span class='copy' id='logs-download' style='display: none'>download</span>
+					<span class='btn btn-download' id='logs-download' style='display: none'><i class="fa fa-arrow-down"></i>&nbsp;download</span>
 					<a id='logs-download-link'></a>
 					<div class="spinner" id='logs-continuing' style="position: absolute; display: none">
 					  <div class="bounce1"></div>
@@ -82,8 +83,18 @@
 		</div>
 
 		<div class='column-2'>
-			<div class='box-vertical' style='padding-left:20px; padding-right:20px;padding-top: 20px; padding-bottom: 15px;height: 370px;border: solid 8px rgb(230,231,232);'>
-				<h1 style='text-align: left; font-size: 16px; margin-top: 0px; margin-bottom: 30px; '>click to copy<br><br><a id='markdown-copy' class='copy'>markdown</a><a id='rst-copy' class='copy'>rst</a><br><br>then paste into your README to get<br><br><a href="http://mybinder.org/repo/{{ repo }}" class='simple-link' id='badge-link-logo'><img class='badge-logo' width='130px' style='margin-left:0px' src="{{ static_url('badge.svg') }}"></img></a></h1>
+			<div class='box-vertical' style='padding-left:15px; padding-right:15px;padding-top:15px; padding-bottom: 20px;height: 370px;border: solid 8px rgb(230,231,232);'>
+				<h1 class='copy-text' style='margin-bottom: 15px'>grab code for your format</h1>
+				<div style='margin-top: 5px; margin-bottom: 20px'>
+					<span id='md-copy' class='btn btn-copy btn-copy-left'>.md</span><span id='rst-copy' class='btn btn-copy btn-copy-right'>.rst</span>
+				</div>
+				<div id='badge-container' style='display: none'>
+					<span id='badge-snippet'></span>
+				</div>
+				<h1 class='copy-text' style='margin-top: 15px; margin-bottom: 20px'>then copy + paste into your README to get</h1>
+				<a href="http://mybinder.org/repo/{{ repo }}" class='simple-link' id='badge-link-logo'>
+					<img class='badge-logo' width='130px' style='margin-left:0px' src="{{ static_url('badge.svg') }}"></img>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -111,6 +122,23 @@ var repo = "{{ repo }}"
 var baseurl = "{{ host }}"
 var endpoint = "http://" + baseurl + "/apps/" + repo + "/status"
 
+// setup badge snippet
+$('#md-copy').click(function() {
+	$('#md-copy').addClass('btn-copy-active')
+	$('#rst-copy').removeClass('btn-copy-active')
+	$('#badge-snippet').text('[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/{{ repo }})')
+	$('#badge-container').fadeIn(100)
+})
+
+$('#rst-copy').click(function() {
+	$('#rst-copy').addClass('btn-copy-active')
+	$('#md-copy').removeClass('btn-copy-active')
+	$('#badge-snippet').text('.. image:: http://mybinder.org/badge.svg :target: http://mybinder.org/repo/{{ repo }}')
+	$('#badge-container').fadeIn(100)
+})
+
+
+// setup download button
 var blob
 
 $('#logs-download').click( function() {
@@ -309,6 +337,7 @@ function set_failed() {
 	$('#circle-small').removeClass('circle-small-success')
 	$('#circle-small').removeClass('circle-small-unknown')
 	$('#circle-small').addClass('circle-small-failure')
+	$('#logs-download').fadeIn(100)
 }
 
 function set_logs_completed(msg) {

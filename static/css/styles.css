@@ -596,7 +596,7 @@ h3 {
 
 /* buttons */
 
-.copy {
+.btn {
 	color: rgb(200,200,200);
     max-width: 120px;
     text-align: center;
@@ -611,19 +611,65 @@ h3 {
     font-family: ClearSans-Thin;
     margin-bottom: 10px;
     display: inline-block;
-  }
+}
  
- .copy:hover { 
- 	color: rgb(150,150,150);
- 	background-color: rgb(220,220,220); 
+.btn:hover { 
+ 	color: rgb(100,100,100);
+ 	background-color: rgb(180,180,180);
  	cursor: pointer;
- }
+}
 
-.copy:focus {
+.btn:focus {
 	background-color: white;
 }
 
-#logs-download {
+.btn:active {
+	background-color: rgb(180,180,180);
+	color: rgb(100,100,100);
+}
+
+.btn-copy {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	font-size: 14px;
+	margin: 0px;
+	padding: 8px;
+	color: rgb(180,180,180);
+	transition: all 0.05s;
+}
+
+.btn-copy-left {
+	border-top-left-radius: 8px;
+	border-top-right-radius: 0px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 0px;
+	border-right: 2px solid rgb(150,150,150);
+}
+
+.btn-copy-right {
+	border-top-left-radius: 0px;
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 0px;
+}
+
+.btn-copy:active {
+	color: rgb(230,230,230);
+}
+
+.btn-copy-active {
+	background-color: rgb(180,180,180);
+	color: rgb(100,100,100);
+}
+
+.copy-text {
+	text-align: left; 
+	font-size: 16px; 
+	margin-top: 0px; 
+	margin-bottom: 30px;
+}
+
+.btn-download {
 	color: rgb(160,160,160);
 	position: absolute;
 	background-color: rgb(230,231,232);
@@ -633,14 +679,28 @@ h3 {
 	padding-bottom: 3px;
 }
 
-#logs-download:hover {
+.btn-download:hover {
 	background-color: rgb(200,200,200);
 	color: rgb(100,100,100);
 }
 
-#logs-download:active {
+.btn-download:active {
 	background-color: rgb(160,160,160);
 	color: rgb(100,100,100);
+}
+
+#badge-container {
+	background-color: white;
+	padding: 5px;
+	border-radius: 4px;
+}
+
+#badge-snippet {
+	word-wrap: break-word;
+	font-family: 'Inconsolata', monospace;
+	color: rgb(120,120,120);
+	font-size: 10px;
+	line-height: 0px;
 }
 
  .copy:active { 
