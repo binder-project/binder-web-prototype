@@ -49,8 +49,8 @@
 						<div id='circle-building' class='circle'></div>
 					</div>
 					<div class='stage row'>
-						<h1 id='deployed' class='stage-name'>Deployed</h1>
-						<div id='circle-deployed' class='circle'></div>
+						<h1 id='completed' class='stage-name'>Completed</h1>
+						<div id='circle-completed' class='circle'></div>
 					</div>
 				</div>
 			</div>
@@ -244,16 +244,16 @@ function update_status() {
 function set_building() {
 	$('#circle-submitted').addClass('circle-success')
 	$('#circle-building').addClass('circle-success')
-	$('#circle-deployed').removeClass('circle-success')
-	$('#circle-deployed').removeClass('circle-failure')
+	$('#circle-completed').removeClass('circle-success')
+	$('#circle-completed').removeClass('circle-failure')
 	$('#progress').removeClass('progress-completed')
 	$('#progress').addClass('progress-building')
 	$('#logs-completed').fadeOut(50, function() {
 		$('#logs-continuing').fadeIn(50)
 	})
-	if ($('#deployed').text() == 'Failed!') {
-		$("#deployed").fadeOut(function() {
-		  $(this).text("Deployed").fadeIn();
+	if ($('#completed').text() == 'Failed!') {
+		$("#completed").fadeOut(function() {
+		  $(this).text("Completed").fadeIn();
 		});
 	}
 }
@@ -261,7 +261,7 @@ function set_building() {
 function set_completed() {
 	$('#circle-submitted').addClass('circle-success')
 	$('#circle-building').addClass('circle-success')
-	$('#circle-deployed').addClass('circle-success')
+	$('#circle-completed').addClass('circle-success')
 	$('#progress').removeClass('progress-building')
 	$('#progress').addClass('progress-completed')
 	$('#circle-small').addClass('circle-small-success')
@@ -273,11 +273,11 @@ function set_completed() {
 function set_failed() {
 	$('#circle-submitted').addClass('circle-success')
 	$('#circle-building').addClass('circle-success')
-	$('#circle-deployed').addClass('circle-failure')
+	$('#circle-completed').addClass('circle-failure')
 	$('#progress').removeClass('progress-building')
 	$('#progress').addClass('progress-completed')
-	if ($('#deployed').text() == 'Deployed') {
-		$("#deployed").fadeOut(50, function() {
+	if ($('#completed').text() == 'Completed') {
+		$("#completed").fadeOut(50, function() {
 		  $(this).text("Failed!").fadeIn(50);
 		});
 	}
