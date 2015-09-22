@@ -321,8 +321,8 @@ input[type=text] {
 	background-color: white;
 	border: solid 8px rgb(230,231,232);
 	border-radius: 6px;
-	padding-top: 20px;
-	padding-bottom: 15px;
+	padding-top: 17px;
+	padding-bottom: 18px;
 	padding-left: 30px;
 	padding-right: 30px;
 }
@@ -674,7 +674,7 @@ h3 {
 	position: absolute;
 	background-color: rgb(230,231,232);
 	right: 40px;
-	bottom: 2px;
+	bottom: 4px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
