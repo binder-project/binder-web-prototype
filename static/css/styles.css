@@ -39,6 +39,10 @@ hr {
 	margin-bottom: 20px;
 }
 
+b {
+	font-family: ClearSans-Medium;
+}
+
 .simple-link {
 	border-bottom: none;
 }

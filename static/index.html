@@ -470,7 +470,7 @@ $("#submit").click(function( event ) {
  	}
 
  	function invalidMessage(msg) {
- 		$('#repo-error').text(msg);
+ 		$('#repo-error').html(msg);
  		el = $('#norepo-name')
  		el.text(repo);
  		el.attr('href', 'https://github.com/' + repo)

@@ -57,7 +57,7 @@ class Validate(tornado.web.RequestHandler):
             response = {'success': True, 'msg': ''}
             for name in ['requirements.txt', 'environment.yml', 'Dockerfile']:
                 if missing(name):
-                    response = {'success': False, 'msg': "There's no %s in your repo" % name}
+                    response = {'success': False, 'msg': "There's no <b>%s</b> in your repo" % name}
 
         except UnknownObjectException, GithubException:
             response = {'success': False, 'msg': 'Oops, that repo does not exist'}
