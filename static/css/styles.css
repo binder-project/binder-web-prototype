@@ -330,6 +330,7 @@ input[type=text] {
 .logs {
 	margin: 10px;
 	height: 330px;
+	word-wrap: break-word;
 }
 
 .logs:focus {
@@ -709,6 +710,16 @@ h3 {
  }
 
 /* jquery-based custom scroll box */
+
+.jspPane {
+	margin-bottom: 9px;
+	margin-top: 0px;
+	font-family: 'Inconsolata', monospace;
+	color: rgb(120,120,120);
+	font-size: 14px;
+	padding-right: 20px;
+	line-height: 1.1em;
+}
 
 .jspTrack {
 	background: rgb(230,231,232) !important;
