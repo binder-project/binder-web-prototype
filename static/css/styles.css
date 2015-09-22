@@ -594,7 +594,7 @@ h3 {
 }
 
 
-/* buttons for zero clipboard */
+/* buttons */
 
 .copy {
 	color: rgb(200,200,200);
@@ -607,7 +607,7 @@ h3 {
     padding: 6px;
     transition: all 0.1s;
     outline: none;
-    font-size: 16px;
+    font-size: 14px;
     font-family: ClearSans-Thin;
     margin-bottom: 10px;
     display: inline-block;
@@ -621,6 +621,26 @@ h3 {
 
 .copy:focus {
 	background-color: white;
+}
+
+#logs-download {
+	color: rgb(160,160,160);
+	position: absolute;
+	background-color: rgb(230,231,232);
+	right: 40px;
+	bottom: 2px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+#logs-download:hover {
+	background-color: rgb(200,200,200);
+	color: rgb(100,100,100);
+}
+
+#logs-download:active {
+	background-color: rgb(160,160,160);
+	color: rgb(100,100,100);
 }
 
  .copy:active { 

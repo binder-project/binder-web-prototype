@@ -70,6 +70,8 @@
 					<div id="logs-completed" style='display: none; position: absolute;'>
 						<div id='circle-small' class='circle-small'></div>
 					</div>
+					<span class='copy' id='logs-download' style='display: none'>download</span>
+					<a id='logs-download-link'></a>
 					<div class="spinner" id='logs-continuing' style="position: absolute; display: none">
 					  <div class="bounce1"></div>
 					  <div class="bounce2"></div>
@@ -109,6 +111,27 @@ var repo = "{{ repo }}"
 var baseurl = "{{ host }}"
 var endpoint = "http://" + baseurl + "/apps/" + repo + "/status"
 
+var blob
+
+$('#logs-download').click( function() {
+	$.ajax(
+		{
+			method: "GET",
+			url: "http://" + baseurl + "/apps/" + repo + "/logs/static",
+			timeout: 2000,
+
+			success: function(data) {
+				blob = data.logs.join("\r\n")
+				console.log(blob)
+				el = $('#logs-download-link')
+				el.attr('download', repo.split('/').slice(1) + '.txt')
+				el.attr('href', 'data:application/text,' + encodeURIComponent(blob))
+				el[0].click()
+			}
+		}
+	)
+	
+})
 
 // setup websockets
 var ws = new WebSocket("ws://" + baseurl + "/apps/" + repo + "/logs/live")
@@ -153,7 +176,6 @@ function init_status() {
 
 			// 
 			success: function(data) {
-				console.log(data)
 				$('#tracker-loading').fadeOut(200, function() {
 					status = data.build_status
 					if (status == "building") {
@@ -173,8 +195,10 @@ function init_status() {
 						$('#logs-continuing').fadeIn(100)
 					} else if (status == "failed") {
 						set_logs_completed('failed')
+						$('#logs-download').fadeIn(100)
 					} else if (status == "completed") {
 						set_logs_completed('success')
+						$('#logs-download').fadeIn(100)
 					} else {
 						no_logs()
 					}
@@ -268,6 +292,7 @@ function set_completed() {
 	$('#circle-small').removeClass('circle-small-failure')
 	$('#circle-small').removeClass('circle-small-unknown')
 	$('#circle-small').addClass('circle-small-success')
+	$('#logs-download').fadeIn(100)
 }
 
 function set_failed() {
