@@ -111,7 +111,7 @@ var endpoint = "http://" + baseurl + "/apps/" + repo + "/status"
 
 
 // setup websockets
-var ws = new WebSocket("ws://" + baseurl + "/apps/" + repo + "/logs")
+var ws = new WebSocket("ws://" + baseurl + "/apps/" + repo + "/logs/live")
 
 ws.onopen = function(){
  	console.log('ws connection opened')
