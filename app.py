@@ -90,7 +90,7 @@ class Redirector(tornado.web.RequestHandler):
             
             if r.status_code == 200:
                 logging.info('status retrieved')
-                blob = r.json()        
+                blob = r.json()       
                 if 'build_status' in blob:
                     status = blob['build_status']
                     if status == 'failed':
@@ -98,7 +98,7 @@ class Redirector(tornado.web.RequestHandler):
                         self.redirect(baseurl + '/status/failed.html')
                     if status == 'building':
                         logging.debug('sending build message')
-                        self.render('static/status/building.html')
+                        self.render('static/status/building.html', repo=app_id, host=options.host)
                     if status == 'completed':
                         # check for capacity
                         r = requests.get(url=endpoint + '/capacity')
