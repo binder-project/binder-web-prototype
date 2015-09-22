@@ -10,7 +10,7 @@ from urlparse import urljoin
 
 port = os.environ.get("PORT", 5000)
 root = os.path.dirname(os.path.abspath(__file__))
-define("host", default="api.mybinder.org", help="IP address for binder API endpoint")
+define("host", default="dev.api.mybinder.org", help="IP address for binder API endpoint")
 
 
 class Building(tornado.web.RequestHandler):
