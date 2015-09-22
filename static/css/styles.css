@@ -638,6 +638,7 @@ h3 {
 .jspDrag {
 	background: rgb(200,200,200) !important;
 	border-radius: 10px;
+	min-height: 10px;
 }
 
 .jspTrack .jspActive,
