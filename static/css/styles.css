@@ -693,6 +693,7 @@ h3 {
 #badge-container {
 	background-color: white;
 	padding: 5px;
+	padding-left: 7px;
 	border-radius: 4px;
 	line-height: 16px;
 }
