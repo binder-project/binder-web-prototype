@@ -153,15 +153,26 @@ $('#logs-download').click( function() {
 		{
 			method: "GET",
 			url: "http://" + baseurl + "/apps/" + repo + "/logs/static",
-			timeout: 2000,
+			timeout: 8000,
 
 			success: function(data) {
 				blob = data.logs.join("\r\n")
-				console.log(blob)
 				el = $('#logs-download-link')
 				el.attr('download', repo.split('/').slice(1) + '.txt')
 				el.attr('href', 'data:application/text,' + encodeURIComponent(blob))
 				el[0].click()
+				$('#logs-download').html('<i class="fa fa-arrow-down"></i>&nbsp;download')
+			},
+
+			beforeSend: function(data) {
+				$('#logs-download').html('downloading...')
+			},
+
+			error: function(err) {
+				$('#logs-download').html('error')
+				setTimeout(function() {
+					$('#logs-download').html('<i class="fa fa-arrow-down"></i>&nbsp;download')
+				}, 800)
 			}
 		}
 	)
