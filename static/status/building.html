@@ -113,7 +113,8 @@ var settings = {
 	stickToBottom: true,
 	maintainPosition: true,
 	horizontalDragMaxWidth: 0,
-	contentWidth: 400
+	contentWidth: 400,
+	autoReinitialise: true
 };
 var pane = $('#logs')
 pane.jScrollPane(settings);
@@ -180,9 +181,8 @@ ws.onmessage = function(ev){
 		update_log(msg)
 	} else if (logfull == false) {
 		api.getContentPane().append(
-			$("<span>").fadeIn(200).html('Too many logs to display, please download the file.<br><br>')
+			$("<span>").fadeIn(200).html('Too many logs to display, please download when finished.<br><br>')
 		);
-		api.reinitialise();
 		logfull = true
 	}
 };
@@ -280,7 +280,6 @@ function init_status() {
 function update_log(content) {
 	if (content != "") {
 		api.getContentPane().append(content + "<br><br>")
-		api.reinitialise();
 		logcount = logcount + 1
 	}
 }
