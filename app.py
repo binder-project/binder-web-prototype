@@ -17,8 +17,11 @@ class Building(tornado.web.RequestHandler):
     """
     Show building status for an app
     """
-    def get(self, org, repo):
-        repo = org + "/" + repo
+    def get(self, org, repo=None):
+        if repo:
+            repo = org + "/" + repo
+        else:
+            repo = org
         self.render('static/status/building.html', repo=repo, host=options.host)
 
 class Validate(tornado.web.RequestHandler):
@@ -69,14 +72,19 @@ class Redirector(tornado.web.RequestHandler):
     """
     Redirect calls to the Binder API depending on status
     """
-    def get(self, org, repo, location=None):
+    def get(self, org, repo=None, location=None):
 
         # strip trailing /
-        if repo[-1] == '/':
+        if repo && repo[-1] == '/':
             repo = repo[:-1]
 
+        # get id
+        if repo:
+            app_id = org + "/" + repo
+        else:
+            app_id = org
+
         # get locations
-        app_id = org + "/" + repo
         baseurl = self.request.protocol + "://" + self.request.host
         endpoint = 'http://' + options.host
         
@@ -159,8 +167,11 @@ settings = {
 
 application = tornado.web.Application([
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/status", Building),
+    (r"/repo/(?P<org>[^\/]+)/status", Building),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)/(?P<location>.*)", Redirector),
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)/(?P<location>.*)", Redirector),
+    (r"/repo/(?P<org>[^\/]+)", Redirector),
     (r"/validate/", Validate),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
 ], autoreload=True, **settings)
