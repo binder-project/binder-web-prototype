@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="keywords" content="github python jupyter spark kubernetes">
+<meta name="description" content="Turn a GitHub repo into a collection of interactive notebooks">
+<meta property="og:image" content="http://mybinder.org/images/logo-square.png"/>
+<title>binder</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="../css/shelves.css">
+<link rel="stylesheet" href="../css/spinner.css" type="text/css">
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="icon" sizes="16x16 32x32" href="../favicon.ico?v=2">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+
+<body>
+<div class='row' style='margin-top: 50px; margin-bottom: 5px'>
+  <a class='simple-link' href='http://mybinder.org'><img class='logo' src='../images/logo.svg'></img></a>
+</div>
+<div id='message' style='display: none;'>
+  <div class='row' id='spinner' style='margin-top: 200px'>
+    <div class="three-quarters-loader">
+    </div>
+  </div>
+</div>
+<div id='container' style='display: none; text-align: center'>
+  <div class='row'>
+    <h1 style='font-size: 20px; margin-top: 10px; margin-bottom: 15px'>click a circle to see a repo</h1>
+  </div>
+  <div id='viz'></div>
+  <div class='row'>
+    <h1 style='font-size: 26px; margin-top: 15px'><a id='repo' class='grayed' href=''></a></h1>
+  </div>
+</div>
+<div id='failed' style='display: none;'>
+  <div class='row'>
+    <h1>Could not connect to Binder service, try again later</h1>
+  </div>
+</div>
+</body>
+
+<script>
+
+var baseurl = 'api.mybinder.org'
+
+var diameter = 500
+var color = d3.scale.category20c()
+var radius = d3.scale.sqrt().range([0, 8])
+var padding = 50
+var width = screen.width * 0.7
+var height = screen.height  * 0.45
+
+var bubble = d3.layout.pack()
+    .sort(null)
+    .size([width, height])
+    .padding(1.5)
+    .value(function (d) {return d.size})
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "bubble");
+
+fetch(function(nodes) {
+
+  var force = d3.layout.force()
+    .gravity(0)
+    .charge(-30)
+    .nodes(nodes)
+    .size([width, height])
+
+  force.start();
+
+  svg.append('text')
+    .attr('x', 0.8*width)
+    .attr('y', 20)
+    .attr('text-anchor', 'middle')
+    .text('running')
+    .classed('running', true)
+
+  svg.append('text')
+    .attr('x', 0.25*width)
+    .attr('y', 20)
+    .attr('text-anchor', 'middle')
+    .text('built')
+    .classed('built', true)
+
+  setColor = function (d) {
+    if (d.running == 0) return '#5799C9'
+    if (d.running > 0) return '#E46581'
+  }
+
+  svg.on('click', function(d) {
+    d3.selectAll('circle').style('fill', setColor)
+    d3.select('#repo').transition().duration(50).style('opacity', '0')
+  })
+
+  var circle = svg.selectAll('circle')
+    .data(nodes)
+    .enter().append('circle')
+    .attr('r', function(d) { return d.radius - 3 })
+    .style('fill', setColor)
+    .on('click', function(d) {
+      d3.event.stopPropagation()
+      $('#repo').attr('href', d.repo)
+      $('#repo').text(d.repo.replace('https://www.github.com/', ''))
+      d3.select('#repo').transition().duration(50).style('opacity', '1')
+      d3.selectAll('circle').transition().duration(100).style('fill', setColor)
+      d3.select(this).transition().duration(100).style('fill', 'rgb(120,120,120)')
+    })
+    .on('mouseover', function(d) {
+      d3.select(this).transition().duration(100).attr('r', function(d) {return d.radius - 1})
+    })
+    .on('mouseout', function(d) {
+      d3.select(this).transition().duration(100).attr('r', function(d) {return d.radius - 3})
+    })
+  force.on("tick", function(e) {
+    var q = d3.geom.quadtree(nodes)
+
+    circle
+      .each(gravity(.25 * e.alpha))
+      .each(collide(0.5))
+      .attr("cx", function(d) { return Math.max(d.radius, Math.min(width - d.radius, d.x)) })
+      .attr("cy", function(d) { return Math.max(d.radius, Math.min(height - d.radius, d.y)) })
+  });
+
+  function gravity(alpha) {
+    return function(d) {
+      if (d.running > 0) {
+        d.y += (0.55*height - d.y) * alpha
+        d.x += (0.75*width - d.x) * alpha
+      } else {
+        d.y += (0.55*height - d.y) * alpha
+        d.x += (0.25*width - d.x) * alpha
+      }
+      
+    };
+  }
+
+  function collide(alpha) {
+    var quadtree = d3.geom.quadtree(nodes);
+    return function(d) {
+      var r = d.radius + padding,
+          nx1 = d.x - r,
+          nx2 = d.x + r,
+          ny1 = d.y - r,
+          ny2 = d.y + r;
+      quadtree.visit(function(quad, x1, y1, x2, y2) {
+        if (quad.point && (quad.point !== d)) {
+          var x = d.x - quad.point.x,
+              y = d.y - quad.point.y,
+              l = Math.sqrt(x * x + y * y),
+              r = d.radius + quad.point.radius
+          if (l < r) {
+            l = (l - r) / l * alpha;
+            d.x -= x *= l;
+            d.y -= y *= l;
+            quad.point.x += x;
+            quad.point.y += y;
+          }
+        }
+        return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+      });
+    };
+  }
+
+})
+
+function fetch(callback) {
+  $.ajax(
+    {
+      method: "GET",
+      url: "http://" + baseurl + '/apps',
+      timeout: 4000,
+      success: function(data) {
+        fetchrunning(data.apps, callback)
+      },
+      error: function(err) {
+        $('#message').fadeOut(300, function() {
+          $('#failed').fadeIn(300);
+        })
+      },
+      beforeSend: function() {
+        $('#message').fadeIn(300);
+      }
+    }
+  )
+}
+
+function fetchrunning(apps, callback) {
+  $.ajax(
+    {
+      method: "GET",
+      url: "http://" + baseurl + '/running',
+      timeout: 4000,
+      success: function(data) {
+        var counts = _.countBy(data.apps, _.identity)
+        apps = _.map(apps, function(app) {
+          var count = counts[app.name] || 0
+          return {
+            repo: app.repo, 
+            radius: 11 + 4*Math.random() + (count - 1) * 1.5, 
+            running: count
+          }
+        })
+        $('#message').fadeOut(300, function() {
+          $('#container').fadeIn(300);
+        })
+        callback(apps)
+      },
+      error: function(err) {
+        console.log(err)
+      }
+    }
+  )
+}
+
+</script>
