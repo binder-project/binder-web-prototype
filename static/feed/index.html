@@ -30,7 +30,7 @@
   </div>
   <div id='viz'></div>
   <div class='row'>
-    <h1 style='font-size: 26px; margin-top: 15px'><a id='repo' class='grayed' href=''></a></h1>
+    <h1 style='font-size: 26px; margin-top: 0px'><a id='repo' class='grayed' href=''></a></h1>
   </div>
 </div>
 <div id='failed' style='display: none;'>
@@ -49,7 +49,7 @@ var color = d3.scale.category20c()
 var radius = d3.scale.sqrt().range([0, 8])
 var padding = 50
 var width = screen.width * 0.7
-var height = screen.height  * 0.45
+var height = screen.height  * 0.5
 
 var bubble = d3.layout.pack()
     .sort(null)
@@ -73,7 +73,7 @@ fetch(function(nodes) {
   force.start();
 
   svg.append('text')
-    .attr('x', 0.8*width)
+    .attr('x', 0.75*width)
     .attr('y', 20)
     .attr('text-anchor', 'middle')
     .text('running')
