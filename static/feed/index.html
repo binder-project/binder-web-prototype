@@ -200,7 +200,7 @@ function fetchrunning(apps, callback) {
           var count = counts[app.name] || 0
           return {
             repo: app.repo, 
-            radius: 11 + 4*Math.random() + (count - 1) * 1.5, 
+            radius: 11 + 4*Math.random() + (count - 1) * 1.25, 
             running: count
           }
         })
