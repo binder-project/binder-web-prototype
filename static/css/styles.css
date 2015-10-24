@@ -55,6 +55,18 @@ b {
 	color: rgb(30,30,30);
 }
 
+.built {
+	font-family: ClearSans-Thin;
+	font-size: 30px;
+	fill: #5799C9;
+}
+
+.running {
+	font-family: ClearSans-Thin;
+	font-size: 30px;
+	fill: #E46581;
+}
+
 p {
 	font-family: ClearSans-Light;
 	font-size: 16px;
