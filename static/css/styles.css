@@ -55,16 +55,34 @@ b {
 	color: rgb(30,30,30);
 }
 
+.noselect {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.count {
+	font-family: ClearSans-Thin;
+	font-size: 16px;
+	fill: white;
+	cursor: pointer;
+}
+
 .built {
 	font-family: ClearSans-Thin;
 	font-size: 30px;
 	fill: #5799C9;
+	cursor: default;
 }
 
 .running {
 	font-family: ClearSans-Thin;
 	font-size: 30px;
 	fill: #E46581;
+	cursor: default;
 }
 
 p {
