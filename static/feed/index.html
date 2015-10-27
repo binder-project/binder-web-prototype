@@ -213,7 +213,7 @@ function fetchrunning(apps, callback) {
           console.log(width)
           return {
             repo: app.repo, 
-            radius: 12 + 3*Math.random() + (Math.sqrt(count) - 1) * 3, 
+            radius: 9.5 + 3*Math.random() + Math.max(Math.sqrt(count) - 1, 0) * 5, 
             running: count,
             x: (count ? 0.75*width : 0.25*width) + 5*(Math.random() - 0.5),
             y: 0.4*height + Math.random()
