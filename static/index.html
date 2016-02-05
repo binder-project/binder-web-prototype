@@ -333,7 +333,9 @@ $("#submit").click(function( event ) {
  		repo = repo.replace('http://github.com/','')
 
  		// strip .git (if pasted from github)
- 		repo = repo.replace('.git', '')
+ 		if (repo.slice(-4) === '.git') {
+ 			repo = repo.slice(0, repo.length-4)
+ 		}
 
  		// strip training slash
  		if (repo.slice(repo.length - 1) == '/') {
