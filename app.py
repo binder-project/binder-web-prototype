@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import logging
+import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
@@ -163,11 +164,11 @@ application = tornado.web.Application([
     (r"/repo/(?P<org>[^\/]+)/(?P<repo>[^\/]+)", Redirector),
     (r"/validate/", Validate),
     (r"/(.*)", CustomStatic, {'path': root + "/static/", "default_filename": "index.html"})
-], autoreload=True, **settings)
+],  **settings)
 
 if __name__ == "__main__":
     tornado.log.enable_pretty_logging()
-    application.listen(port)
-    for dir, _, files in os.walk('static'):
-        [tornado.autoreload.watch(dir + '/' + f) for f in files if not f.startswith('.')]
+    server = tornado.httpserver.HTTPServer(application)
+    server.bind(port)
+    server.start(0)
     tornado.ioloop.IOLoop.current().start()
