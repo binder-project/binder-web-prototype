@@ -108,7 +108,7 @@ class Redirector(tornado.web.RequestHandler):
                             self.render('static/status/capacity.html')
                         else:
                             try:
-                                r = requests.get(url=urljoin(endpoint + '/apps/', app_id), timeout=(10.0, 10.0))
+                                r = requests.get(url=urljoin(endpoint + '/apps/', app_id), timeout=(20.0, 20.0))
                                 redirectblob = r.json()
                                 if 'redirect_url' in redirectblob:
                                     url = redirectblob['redirect_url']
