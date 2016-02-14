@@ -72,14 +72,39 @@ b {
 }
 
 .built {
-	font-family: ClearSans-Thin;
+	font-family: ClearSans-Medium;
 	font-size: 30px;
 	fill: #5799C9;
 	cursor: default;
 }
 
-.running {
+.plain {
 	font-family: ClearSans-Thin;
+	font-size: 30px;
+	fill: rgb(50, 50, 50);
+	cursor: default;
+}
+
+.link {
+	font-family: ClearSans-Thin;
+	font-size: 30px;
+	fill: rgb(120, 120, 120);
+	cursor: pointer;
+}
+
+.link:hover {
+	fill: rgb(10, 10, 10);
+}
+
+.gray {
+	font-family: ClearSans-Thin;
+	font-size: 30px;
+	fill: rgb(120, 120, 120);
+	cursor: default;
+}
+
+.running {
+	font-family: ClearSans-Medium;
 	font-size: 30px;
 	fill: #E46581;
 	cursor: default;

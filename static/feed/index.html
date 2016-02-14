@@ -24,14 +24,8 @@
     </div>
   </div>
 </div>
-<div id='container' style='display: none; text-align: center'>
-  <div class='row'>
-    <h1 style='font-size: 20px; margin-top: 10px; margin-bottom: 15px'>click a circle to see a repo</h1>
-  </div>
-  <div id='viz'></div>
-  <div class='row'>
-    <h1 style='font-size: 26px; margin-top: 0px'><a id='repo' class='grayed' href=''></a></h1>
-  </div>
+<div id='container' style='display: none; text-align: right'>
+  <div style='margin-top: 40px' id='viz'></div>
 </div>
 <div id='failed' style='display: none;'>
   <div class='row'>
@@ -48,15 +42,20 @@ var diameter = 500
 var color = d3.scale.category20c()
 var radius = d3.scale.sqrt().range([0, 8])
 var padding = 50
-var width = screen.width * 0.7
-var height = screen.height  * 0.5
+var width = window.innerWidth * 0.9
+var height = window.innerHeight * 0.7
 
 var svg = d3.select("#viz").append("svg")
     .attr("width", width)
     .attr("height", height)
     .attr("class", "bubble");
 
-fetch(function(nodes) {
+fetch(function(data) {
+
+  var nodes = data.runningApps
+  var topFive = nodes.slice(0, 5)
+
+  console.log(topFive)
 
   var force = d3.layout.force()
     .gravity(0)
@@ -67,19 +66,72 @@ fetch(function(nodes) {
   force.start();
 
   svg.append('text')
-    .attr('x', 0.75*width)
-    .attr('y', 20)
-    .attr('text-anchor', 'middle')
+    .attr('x', 0.2*width)
+    .attr('y', 70)
+    .attr('text-anchor', 'left')
     .text('running')
+    .classed('plain', true)
+    .classed('noselect', true)
+
+  svg.append('text')
+    .attr('x', 0.1*width)
+    .attr('y', 70)
+    .attr('text-anchor', 'left')
+    .text('built')
+    .classed('plain', true)
+    .classed('noselect', true)
+
+  svg.append('text')
+    .attr('x', 0.2*width)
+    .attr('y', 110)
+    .attr('text-anchor', 'left')
+    .text(data.runningCount)
     .classed('running', true)
     .classed('noselect', true)
 
   svg.append('text')
-    .attr('x', 0.25*width)
-    .attr('y', 20)
-    .attr('text-anchor', 'middle')
-    .text('built')
+    .attr('x', 0.1*width)
+    .attr('y', 110)
+    .attr('text-anchor', 'left')
+    .text(data.builtCount)
     .classed('built', true)
+    .classed('noselect', true)
+
+  svg.append('text')
+    .attr('x', 0.1*width)
+    .attr('y', 200)
+    .attr('text-anchor', 'left')
+    .text('most popular')
+    .classed('plain', true)
+    .classed('noselect', true)
+
+  _.forEach(topFive, function (app, index) {
+    svg.append('text')
+      .attr('x', 0.1*width)
+      .attr('y', 200 + 40 * (index + 1))
+      .attr('text-anchor', 'left')
+      .text(app.repo.replace('https://www.github.com/', ''))
+      .attr('href', app.repo)
+      .classed('link', true)
+      .classed('noselect', true)
+      .on('click', function() { window.open(app.repo); })
+      .on('mouseover', function() { 
+        d3.selectAll('circle').style('fill', function (d) {
+          if (d.repo === app.repo) return 'rgb(120,120,120)'
+          else return '#E46581'
+        })
+      })
+      .on('mouseout', function() { 
+        d3.selectAll('circle').style('fill', '#E46581')
+      })
+  })
+
+  var selected = svg.append('text')
+    .attr('x', 0.7*width)
+    .attr('y', 400)
+    .attr('text-anchor', 'middle')
+    .text('')
+    .classed('link', true)
     .classed('noselect', true)
 
   setColor = function (d) {
@@ -90,7 +142,7 @@ fetch(function(nodes) {
   svg.on('click', function(d) {
     d3.selectAll('text.count').transition().duration(50).style('opacity','0').remove()
     d3.selectAll('circle').style('fill', setColor)
-    d3.select('#repo').transition().duration(50).style('opacity', '0')
+    selected.transition().duration(50).style('opacity', '0')
   })
 
   var circle = svg.selectAll('circle')
@@ -102,9 +154,9 @@ fetch(function(nodes) {
     .on('click', function(d) {
       d3.event.stopPropagation()
       d3.selectAll('text.count').transition().duration(50).style('opacity','0').remove()
-      $('#repo').attr('href', d.repo)
-      $('#repo').text(d.repo.replace('https://www.github.com/', ''))
-      d3.select('#repo').transition().duration(50).style('opacity', '1')
+      selected.text(d.repo.replace('https://www.github.com/', ''))
+      selected.on('click', function() { window.open(d.repo); })
+      selected.transition().duration(50).style('opacity', '1')
       d3.selectAll('circle').transition().duration(100).style('fill', setColor)
       d3.select(this).transition().duration(100).style('fill', 'rgb(120,120,120)')
       if (d.running > 0) {
@@ -139,14 +191,8 @@ fetch(function(nodes) {
 
   function gravity(alpha) {
     return function(d) {
-      if (d.running > 0) {
-        d.y += (0.55*height - d.y) * alpha
-        d.x += (0.75*width - d.x) * alpha
-      } else {
-        d.y += (0.55*height - d.y) * alpha
-        d.x += (0.25*width - d.x) * alpha
-      }
-      
+      d.y += (0.35*height - d.y) * alpha
+      d.x += (0.7*width - d.x) * alpha
     };
   }
 
@@ -186,6 +232,7 @@ function fetch(callback) {
       url: "http://" + baseurl + '/apps',
       timeout: 4000,
       success: function(data) {
+        console.log(data)
         fetchrunning(data.apps, callback)
       },
       error: function(err) {
@@ -208,21 +255,27 @@ function fetchrunning(apps, callback) {
       timeout: 4000,
       success: function(data) {
         var counts = _.countBy(data.apps, _.identity)
-        apps = _.map(apps, function(app) {
+        console.log(counts)
+        var running = []
+        _.forEach(apps, function(app) {
           var count = counts[app.name] || 0
-          console.log(width)
-          return {
+          if (count) running.push({
             repo: app.repo, 
             radius: 9.5 + 3*Math.random() + Math.max(Math.sqrt(count) - 1, 0) * 5, 
             running: count,
-            x: (count ? 0.75*width : 0.25*width) + 5*(Math.random() - 0.5),
-            y: 0.4*height + Math.random()
-          }
+            x: 5*(Math.random() - 0.5),
+            y: 0.4*height + Math.random(),
+            name: app.name
+          })
         })
         $('#message').fadeOut(300, function() {
           $('#container').fadeIn(300);
         })
-        callback(apps)
+        callback({
+          builtCount: apps.length, 
+          runningCount: _.values(counts).reduce(function(x, y) {return x + y}),
+          runningApps: _.sortBy(running, 'running').reverse()
+        })
       },
       error: function(err) {
         console.log(err)
