@@ -153,7 +153,7 @@ $('#logs-download').click( function() {
 		{
 			method: "GET",
 			url: "http://" + baseurl + "/apps/" + repo + "/logs/static",
-			timeout: 8000,
+			timeout: 20000,
 
 			success: function(data) {
 				blob = data.logs.join("\r\n")
