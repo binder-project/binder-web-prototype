@@ -46,7 +46,7 @@ class Validate(tornado.web.RequestHandler):
         try:
             gitrepo = gituser.get_repo(repo)
             contents = gitrepo.get_dir_contents('/')
-            names = [str(c.name) for c in contents]
+            names = [c.name for c in contents]
 
             def missing(filename):
                 if (deps == [filename]) and (filename not in names):
