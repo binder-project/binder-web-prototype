@@ -148,11 +148,14 @@ class Redirector(tornado.web.RequestHandler):
 
 class CustomStatic(tornado.web.StaticFileHandler):
     """
-    Modified static handler to serve a custom 404
+    Modified static handler to serve a custom 404 and remove caching
     """
     def write_error(self, status_code, **kwargs):
         baseurl = self.request.protocol + "://" + self.request.host
         self.redirect(baseurl + '/status/404.html')
+
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static")
