@@ -73,21 +73,32 @@ b {
 
 .built {
 	font-family: ClearSans-Medium;
-	font-size: 30px;
+	font-size: 28px;
 	fill: #5799C9;
 	cursor: default;
 }
 
 .plain {
 	font-family: ClearSans-Thin;
-	font-size: 30px;
+	font-size: 28px;
 	fill: rgb(50, 50, 50);
 	cursor: default;
 }
 
+.pink {
+	font-family: ClearSans-Thin;
+	font-size: 24px;
+	fill: #E46581;
+	cursor: pointer;
+}
+
+.pink:hover {
+	fill: rgb(168,51,69);
+}
+
 .link {
 	font-family: ClearSans-Thin;
-	font-size: 30px;
+	font-size: 28px;
 	fill: rgb(120, 120, 120);
 	cursor: pointer;
 }
@@ -98,14 +109,14 @@ b {
 
 .gray {
 	font-family: ClearSans-Thin;
-	font-size: 30px;
+	font-size: 28px;
 	fill: rgb(120, 120, 120);
 	cursor: default;
 }
 
 .running {
 	font-family: ClearSans-Medium;
-	font-size: 30px;
+	font-size: 28px;
 	fill: #E46581;
 	cursor: default;
 }
