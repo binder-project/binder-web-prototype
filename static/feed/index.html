@@ -230,7 +230,7 @@ function fetch(callback) {
     {
       method: "GET",
       url: "http://" + baseurl + '/apps',
-      timeout: 4000,
+      timeout: 10000,
       success: function(data) {
         fetchrunning(data.apps, callback)
       },
