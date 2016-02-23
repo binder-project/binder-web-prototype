@@ -254,10 +254,9 @@ function fetchrunning(apps, callback) {
       timeout: 4000,
       success: function(data) {
         var counts = _.countBy(data.apps, _.identity)
-        console.log(counts)
         var running = []
         _.forEach(apps, function(app) {
-          var count = counts[app.name] || 0
+          var count = counts[app.name + ':latest'] || 0
           if (count) running.push({
             repo: app.repo, 
             radius: 9.5 + 3*Math.random() + Math.max(Math.sqrt(count) - 1, 0) * 5, 
