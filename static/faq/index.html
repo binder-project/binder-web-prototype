@@ -16,106 +16,104 @@
   <a class='simple-link' href='http://mybinder.org'><img class='logo' src='../images/logo.svg'></img></a>
 </div>
 
-<div class='row' style='max-width: 60%; text-align: left; margin-bottom: 90px'>
+<div class='row' style='max-width: 60%; text-align: left; margin-bottom: 90px; font-size: 150%'>
+<h1 style='text-align: center'>F.A.Q.</h1>
 <div>
-    <h1 style='text-align: center'>F.A.Q.</h1>
+    <h4>Where is this running?</h4>
 </div>
 <div>
-    <h3>Where is this running?</h3>
+    <p class='faq'>The public deployment is running on a small Google Compute Engine cluster.</p>
 </div>
 <div>
-    <p>The public deployment is running on a small Google Compute Engine cluster.</p>
+    <h4>Who’s paying for it?</h4>
 </div>
 <div>
-    <h3>Who’s paying for it?</h3>
+    <p class='faq'>The public deployment is supported by <a href='http://thefreemanlab.com'>The Freeman Lab</a> at <a href='http://janelia.org'>HHMI Janelia Research Campus</a>. It is intended for open source and open science. We strongly believe that reproducible science and analysis be available as a public service, and are working to make this possible, in collaboration with like-minded groups.</p>
 </div>
 <div>
-    <p>The public deployment is supported by <a href='http://thefreemanlab.org'>The Freeman Lab</a> at <a href='http://janelia.org'>HHMI Janelia Research Campus</a>. It is intended for open source and open science. We strongly believe that reproducible science and analysis be available as a public service, and we will work to make this possible, whether on our own or through partnerships with like-minded organizations.</p>
+    <h4>Do you plan to monetize this?</h4>
 </div>
 <div>
-    <h3>Do you plan to monetize this?</h3>
+    <p class='faq'>No. We will keep Binder available as a free, public service.</p>
 </div>
 <div>
-    <p>No. We intend to keep Binder available as a free, public service.</p>
+    <h4>Can I deploy the system myself?</h4>
 </div>
 <div>
-    <h3>Can I deploy the system myself?</h3>
+    <p class='faq'>Binder is 100% open-source, and you can technically deploy the current version yourself, but it is not straightforward. The next release of Binder is designed to make this process as simple as possible. See the <a href='#future'>future plans</a> below for more information.</p>
 </div>
 <div>
-    <p>Binder is 100% open-source, and you can technically deploy the current version yourself. But the next release of Binder is designed to make this process as simple as possible. See the <a href='#future'>future plans</a> below for more information.</p>
+    <h4>What’s the best way to access data?</h4>
 </div>
 <div>
-    <h3>What’s the best way to access data?</h3>
+    <p class='faq'>For now, you should include your data in your repository. GitHub has reasonable limits on maximum size (~200MB), and loading data that’s much larger can overwhelm the public cluster. If you need to fetch data from external sources, all deployments do have full network access. Remember not to insert private keys or other personal authorization information into a running Binder, as we don’t provide any strong privacy guarantees. In the future, we will support loading versioned data via <a href='http://dat-data.com'>Dat</a>.</p>
 </div>
 <div>
-    <p>For now, you should include your data in your repository. GitHub has reasonable limits on maximum size (~200MB), and loading data that’s much larger can overwhelm the public cluster. If you need to fetch data from external sources, all deployments do have full network access. Remember not to insert private keys or other personal authorization information into a running Binder, as we don’t provide any strong privacy guarantees. In the future, we will support loading versioned data via <a href='http://dat-data.com'>Dat</a>.</p>
+    <h4>What link should I share?</h4>
 </div>
 <div>
-    <h3>What link should I share?</h3>
-</div>
-<div>
-    <p>When a Binder is first launched, it’s assigned a unique identifier and can be accessed at a link that looks something like <a href="">http://app.mybinder.org/2141553279/tree
+    <p class='faq'>When a Binder is first launched, it’s assigned a unique identifier and can be accessed at a link that looks something like <a href="">http://app.mybinder.org/2141553279/tree
     </a> where 2141553279 is the instance identifier for that deployment. These links are ephemeral and will not work after one hour of inactivity, so we don’t recommend sharing them. If you’d like to share your Binder, you can copy+paste the link from the GitHub badge, which looks like <a href="">http://mybinder.org/repo/binder-project/example-requirements</a>. That link will launch a fresh instance.</p>
 </div>
 <div>
-    <h3>Are my running deployments private?</h3>
+    <h4>Are my running deployments private?</h4>
 </div>
 <div>
-    <p>Each Binder is launched with a unique identifier. These identifiers are not explicitly searchable, but you should not assume that a running deployment is inaccessible to others. For now, we don't recommend using Binder for any work that should not be tampered with or lost.</p>
+    <p class='faq'>Each Binder is launched with a unique identifier. These identifiers are not explicitly searchable, but you should not assume that a running deployment is inaccessible to others. For now, we don't recommend using Binder for any work that should not be tampered with or lost.</p>
 </div>
 <div>
-    <h3>Should I put private content into a Binder?</h3>
+    <h4>Should I put private content into a Binder?</h4>
 </div>
 <div>
-    <p>No. We don’t provide any guarantees of privacy, so private keys and passwords should never be inserted into a running deployment -- or in a GitHub repo, of course! Your Binders should only use code and data that’s freely accessible.</p>
+    <p class='faq'>No. We don’t provide any guarantees of privacy, so private keys and passwords should never be inserted into a running deployment -- or in a GitHub repo, of course! Your Binders should only use code and data that’s freely accessible.</p>
 </div>
 <div>
-    <h3>Can anybody build a Binder from my repository?</h3>
+    <h4>Can anybody build a Binder from my repository?</h4>
 </div>
 <div>
-    <p>Yes. As of now, we do not require authentication when building from a repository. This makes it simple to get started, but cannot prevent others from breaking an existing Binder by building it with incorrect parameters. For now, we’re depending on everyone’s goodwill, but in the 1.0.0 release  we’ll ensure that a full description of an environment is embedded into the repository itself, as a <code>.binder.yml</code> file. With that description, any subsequent rebuilds will be identical, and changes to the environment will require changing the repository itself.</p>
+    <p class='faq'>Yes. As of now, we do not require authentication when building from a repository. This makes it simple to get started, but cannot prevent others from breaking an existing Binder by building it with incorrect parameters. For now, we’re depending on everyone’s goodwill, but in the 1.0.0 release  we’ll ensure that a full description of an environment is embedded into the repository itself, as a <code>.binder.yml</code> file. With that description, any subsequent rebuilds will be identical, and changes to the environment will require changing the repository itself.</p>
 </div>
 <div>
-    <h3>What’s the plan for future development?</h3>
+    <h4>What’s the plan for future development?</h4>
 </div>
 <div id='future'>
-    <p>Binder began as a prototype, written in python, and was far more popular than we initially expected! We are nearly finished with a complete rewrite of the system, to better support all the new features that we, and the community, want to add. The new version is written in node.js and is built from the following modules, each of which can be independently versioned, documented, and tested:</p>
-    <p><a href='https://github.com/binder-project/binder-build'><code>binder-build</code></a> : convert repositories into docker images</p>
-    <p><a href='https://github.com/binder-project/binder-registry'><code>binder-registry</code></a> : manage to-be-deployed images</p>
-    <p><a href='https://github.com/binder-project/binder-deploy-kubernetes'><code>binder-deploy-kubernetes</code></a> : deploy images to a Kubernetes cluster</p>
-    <p><a href='https://github.com/binder-project/binder-control'><code>binder-control</code></a> : a CLI for launching binder services</p>
-    <p><a href='https://github.com/binder-project/binder-client'><code>binder-client</code></a> : a CLI and API for interacting with binder services</p>
-    <p><a href='https://github.com/binder-project/binder-qwb-react'><code>binder-web-react</code></a> : a generic front end for managing binder deployments</p>
-    <p>From the outset, the new version will support a stricter specification of Binders that will pin each deployment to a particular version-controlled commit, branch, or tag, with all information necessary for the image contained in the repository via a <code>.binder.yml</code> file. For compatibility with existing behavior, builds can fall back to using language-specific dependency files or Dockerfiles.</p>
+    <p class='faq'>Binder began as a prototype, written in python, and was far more popular than we initially expected! We are nearly finished with a complete rewrite of the system, to better support all the new features that we, and the community, want to add. The new version is written in node.js and is built from the following modules, each of which can be independently versioned, documented, and tested:</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-build'><code>binder-build</code></a> : convert repositories into docker images</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-registry'><code>binder-registry</code></a> : manage to-be-deployed images</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-deploy-kubernetes'><code>binder-deploy-kubernetes</code></a> : deploy images to a Kubernetes cluster</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-control'><code>binder-control</code></a> : a CLI for launching binder services</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-client'><code>binder-client</code></a> : a CLI and API for interacting with binder services</p>
+    <p class='faq'><a href='https://github.com/binder-project/binder-qwb-react'><code>binder-web-react</code></a> : a generic front end for managing binder deployments</p>
+    <p class='faq'>From the outset, the new version will support a stricter specification of Binders that will pin each deployment to a particular version-controlled commit, branch, or tag, with all information necessary for the image contained in the repository via a <code>.binder.yml</code> file. For compatibility with existing behavior, builds can fall back to using language-specific dependency files or Dockerfiles.</p>
 </div>
 <div id='roadmap'>
-    <h3>What’s the roadmap?</h3>
+    <h4>What’s the roadmap?</h4>
 </div>
 <div>
-    <p>We will launch Binder 1.0.0 in March 2016 with full documentation and usage guides, and begin using it in our public deployment. Anyone who has expressed interest in custom deployments should give it a spin and reach out with questions! After that, we will add new features according to the following roadmap.</p>
+    <p class='faq'>We will launch Binder 1.0.0 in March 2016 with full documentation and usage guides, and begin using it in our public deployment. Anyone who has expressed interest in custom deployments should give it a spin and reach out with questions! After that, we will add new features according to the following roadmap.</p>
 </div>
 <div>
-    <p>April 2016</p>
+    <p class='faq'>April 2016</p>
     <li>Add https support to deployments [<code>binder-deploy</code>]</li>
     <li>Support headless Binder kernels to connect to embeddable code cells [<code>binder-deploy-kubernetes</code>]</li>
     <li>Use GitHub commit hooks to rebuild Binders when repositories change [<code>binder-build</code>]</li>
 </div>
 <div>
-    <p>May 2016</p>
+    <p class='faq'>May 2016</p>
     <li>Integrate links to versioned data hashes using Dat [<code>binder-build</code>]</li>
     <li>Add support for other version-control systems like BitBucket or GitLab [<code>binder-build</code>]</li>
 </div>
 <div>
-    <p>June 2016</p>
+    <p class='faq'>June 2016</p>
     <li>Support instantaneous deployment times using pools of pre-deployed Binders [<code>binder-deploy</code>]</li>
     <li>Add authentication to support building Binders from private repos [<code>binder-build</code>, <code>binder-web-react</code>]</li>
 </div>
 <div>
-    <h3>Can I help?</h3>
+    <h4>Can I help?</h4>
 </div>
 <div>
-    <p>Yes! Reproducible science takes a village. Reach out on <a href='http://gitter.im/binder-project/binder'>gitter</a> or <a href='https://github.com/binder-project'>GitHub</a> with any questions or ideas.</p>
+    <p class='faq'>Yes! Reproducible science takes a village. Reach out on <a href='http://gitter.im/binder-project/binder'>gitter</a> or <a href='https://github.com/binder-project'>GitHub</a> with any questions or ideas.</p>
 </div>
 </div>
 
-</h3ody>
+</h4ody>

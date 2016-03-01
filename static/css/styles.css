@@ -126,6 +126,10 @@ p {
 	font-size: 16px;
 }
 
+.faq {
+	font-size: 18px;	
+}
+
 li {
 	font-family: ClearSans-Light;
 	font-size: 16px;
@@ -659,6 +663,11 @@ h2 {
 h3 {
 	font-family: ClearSans-Medium;
 	font-size: 18px;
+}
+
+h4 {
+	font-family: ClearSans-Medium;
+	font-size: 20px;
 }
 
 #logs-continuing {
