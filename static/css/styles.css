@@ -126,6 +126,11 @@ p {
 	font-size: 16px;
 }
 
+li {
+	font-family: ClearSans-Light;
+	font-size: 16px;
+}
+
 a:hover {
 	color: rgb(180,70,100);
 }
